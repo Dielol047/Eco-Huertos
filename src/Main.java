@@ -1,7 +1,7 @@
-import Personal.*;
-import Suelo.*;
-import Biodata.*;
-import Estadistica.*;
+import Modelo.*;
+import Negocio.*;
+import Interfaz.*;
+
 import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {

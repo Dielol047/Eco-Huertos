@@ -1,4 +1,4 @@
-package Personal;
+package Modelo;
 
 public class Persona {
     protected String id;

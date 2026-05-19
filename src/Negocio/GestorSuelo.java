@@ -1,4 +1,6 @@
-package Suelo;
+package Negocio;
+
+import Modelo.Parcela;
 
 public class GestorSuelo {
     public boolean validarRotacion(Parcela p, String nuevoGenero) {

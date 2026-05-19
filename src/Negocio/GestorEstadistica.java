@@ -1,4 +1,7 @@
-package Estadistica;
+package Negocio;
+
+import Modelo.Comedor;
+import Modelo.Cosecha;
 
 public class GestorEstadistica {
     public void procesarEntrega(Cosecha c, Comedor com, double kilos) {

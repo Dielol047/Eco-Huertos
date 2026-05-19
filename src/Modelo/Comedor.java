@@ -1,4 +1,4 @@
-package Estadistica;
+package Modelo;
 
 public class Comedor {
     private String idComedor;

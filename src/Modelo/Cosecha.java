@@ -1,4 +1,4 @@
-package Estadistica;
+package Modelo;
 
 public class Cosecha {
     private String idCosecha;

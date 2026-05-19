@@ -1,4 +1,4 @@
-package Biodata;
+package Modelo;
 
 public class Especie {
     private String idEspecie;

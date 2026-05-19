@@ -1,4 +1,4 @@
-package Suelo;
+package Modelo;
 
 public class Parcela {
     private String idParcela;

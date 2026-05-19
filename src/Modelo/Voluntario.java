@@ -1,4 +1,4 @@
-package Personal;
+package Modelo;
 
 public class Voluntario extends Persona{
     private int nivelExperiencia;

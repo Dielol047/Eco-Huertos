@@ -1,4 +1,4 @@
-package Biodata;
+package Modelo;
 
 public class LoteCompost {
     private String idLote;

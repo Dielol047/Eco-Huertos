@@ -1,4 +1,4 @@
-package Personal;
+package Modelo;
 
 public class Trabajador extends Persona{
     private String cargo;

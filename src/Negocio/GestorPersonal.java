@@ -1,4 +1,6 @@
-package Personal;
+package Negocio;
+
+import Modelo.Voluntario;
 
 public class GestorPersonal {
     public void asignarTarea(Voluntario v, String tarea) {

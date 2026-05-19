@@ -1,4 +1,6 @@
-package Biodata;
+package Negocio;
+
+import Modelo.LoteCompost;
 
 public class GestorBiodata {
     public String proyectarMaduracion(LoteCompost lote) {
