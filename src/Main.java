@@ -2,12 +2,17 @@ import Modelo.*;
 import Negocio.*;
 import Interfaz.*;
 import Modelo.ContextoAgroCiclo;
-
+import Modelo.ElementoTaxonomico;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Locale;
 public class Main {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
+        ArrayList<ElementoTaxonomico> misSelecciones = new ArrayList<>();
+        boolean salirDefinitivo = false;
 
-        Scanner scanner = new Scanner(System.in);
+
         GestorSuelo gestorSue = new GestorSuelo();
         GestorPersonal gestorPer = new GestorPersonal();
         GestorEstadistica gestorEst = new GestorEstadistica();
@@ -15,8 +20,8 @@ public class Main {
         System.out.println("=== BIENVENIDO A AGROCICLO ===");
 
 
-        boolean seleccionValida = false;
-        String taxonomia = "";
+        while (!salirDefinitivo) {
+            String taxonomia = "";
 
         // Cambiamos la lógica: el ciclo se repite mientras NO hayamos seleccionado una opción válida (1-5)
         while (taxonomia.equals("")) {
@@ -55,36 +60,81 @@ public class Main {
                 scanner.next();
             }
         }
-
-        // Una vez que el while termina porque taxonomia dejó de estar vacía, continuamos:
         ContextoAgroCiclo.setTaxonomia(taxonomia);
         System.out.println(">>> Sistema configurado exitosamente para: " + taxonomia);
-        ContextoAgroCiclo.setTaxonomia(taxonomia);
-        while(true) {
-            System.out.println("\n--- MENU PRINCIPAL (" + taxonomia + ") ---");
-            System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Salir");
-            System.out.print("Elija una opción (1-6): ");
 
-            // CP3: Estabilidad (se valida si es entero, evitando que el programa se cierre)
-            if (scanner.hasNextInt()) {
-                int opcion = scanner.nextInt();
+            System.out.print("Nombre del cultivo: ");
+            scanner.nextLine();
+            String nombreCultivo = scanner.nextLine();
 
-                // CP2: Validación de rango [1-6]
-                if (opcion >= 1 && opcion <= 6) {
-                    if (opcion == 6) {
-                        System.out.println("Saliendo de AgroCiclo.");
-                        break;
-                    }
-                    // Ejecutor (placeholder para tus gestores)
-                    System.out.println("Ejecutando lógica de la opción " + opcion + "...");
+            double km2 = -1;
+            while (km2 <= 0) {
+                System.out.print("Ingrese la cantidad en km2 (mayor a 0): ");
+                if (scanner.hasNextDouble()) {
+                    km2 = scanner.nextDouble();
+                    if (km2 <= 0) System.out.println("Error: Debe ser positivo.");
                 } else {
-                    System.out.println("--- Error: Opción fuera de rango (1-6). ---");
+                    System.out.println("Error: Ingrese un número válido.");
+                    scanner.next();
                 }
-            } else {
-                System.out.println("--- Error: Ingrese solo valores numéricos. ---");
-                scanner.next(); // Limpia la entrada inválida (CP3)
             }
+
+            misSelecciones.add(new ElementoTaxonomico(taxonomia, nombreCultivo, (int)km2));
+            System.out.println("¡Objeto creado correctamente!");
+            System.out.println("\n=== SELECCIÓN DE CULTIVO ACTIVO ===");
+            System.out.println("Actualmente hay " + misSelecciones.size() + " registrado(s).");
+            for (int i = 0; i < misSelecciones.size(); i++) {
+                System.out.println((i + 1) + ". " + misSelecciones.get(i).getNombre() + " (" + misSelecciones.get(i).getCategoria() + ")");
+            }
+
+            // Selección de cultivo
+            int seleccionIdx = -1;
+            while (seleccionIdx < 0 || seleccionIdx >= misSelecciones.size()) {
+                System.out.print("Elija el número del cultivo para trabajar (1-" + misSelecciones.size() + "): ");
+                if (scanner.hasNextInt()) {
+                    seleccionIdx = scanner.nextInt() - 1;
+                    if (seleccionIdx < 0 || seleccionIdx >= misSelecciones.size()) {
+                        System.out.println("--- Error: El número seleccionado no está en la lista. ---");
+                    }
+                } else {
+                    System.out.println("--- Error: Entrada inválida. Por favor ingrese un número. ---");
+                    scanner.next(); // Limpiar entrada
+                }
+            }
+
+            ElementoTaxonomico activo = misSelecciones.get(seleccionIdx);
+            ContextoAgroCiclo.setTaxonomia(activo.getCategoria()); // Importante para el contexto
+            System.out.println(">>> Trabajando con: " + activo.getNombre());
+
+            boolean volverATaxonomia = false;
+            while (!volverATaxonomia && !salirDefinitivo) {
+                System.out.println("\n--- MENU PRINCIPAL (" + activo.getNombre() + ") ---");
+                System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Volver a Taxonomía | 7. Salir");
+                System.out.print("Elija una opción (1-7): ");
+
+                if (scanner.hasNextInt()) {
+                    int opcion = scanner.nextInt();
+                    switch (opcion) {
+                        case 1, 2, 3, 4, 5 -> System.out.println("Ejecutando lógica de opción " + opcion);
+                        case 6 -> {
+                            System.out.println("Regresando a Taxonomía...");
+                            volverATaxonomia = true; // Esto rompe el bucle del menú y vuelve al while superior
+                        }
+                        case 7 -> {
+                            System.out.println("Saliendo de AgroCiclo.");
+                            volverATaxonomia = true;
+                            salirDefinitivo = true; // Esto rompe el menú Y el bucle exterior
+                        }
+                        default -> System.out.println("--- Error: Opción inválida. ---");
+                    }
+                } else {
+                    System.out.println("--- Error: Entrada inválida. ---");
+                    scanner.next();
+                }
+            }
+        } // Fin del while (!salirDefinitivo)
+            scanner.close();
         }
-        scanner.close();
     }
-}
+
+
