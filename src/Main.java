@@ -1,19 +1,23 @@
 import Modelo.*;
 import Negocio.*;
 import Interfaz.*;
+import Negocio.GestorSuelo;
 import Modelo.ContextoAgroCiclo;
-import Modelo.ElementoTaxonomico;
+import Modelo.Cultivos;
+import Modelo.Parcela;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Locale;
 public class Main {
+    static GestorSuelo gestorSuelo = new GestorSuelo();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
-        ArrayList<ElementoTaxonomico> misSelecciones = new ArrayList<>();
+        ArrayList<Cultivos> misSelecciones = new ArrayList<>();
         boolean salirDefinitivo = false;
+        Parcela p1 = null; // Declarada aquí para que el case 8 la reconozca
 
-
-        GestorSuelo gestorSue = new GestorSuelo();
+        // Debes declarar e instanciar el gestor antes de usarlo
+        GestorSuelo gestorSuelo = new GestorSuelo();
         GestorPersonal gestorPer = new GestorPersonal();
         GestorEstadistica gestorEst = new GestorEstadistica();
 
@@ -79,7 +83,7 @@ public class Main {
                 }
             }
 
-            misSelecciones.add(new ElementoTaxonomico(taxonomia, nombreCultivo, (int)km2));
+            misSelecciones.add(new Cultivos(taxonomia, nombreCultivo, (int)km2));
             System.out.println("¡Objeto creado correctamente!");
             System.out.println("\n=== SELECCIÓN DE CULTIVO ACTIVO ===");
             System.out.println("Actualmente hay " + misSelecciones.size() + " registrado(s).");
@@ -102,30 +106,56 @@ public class Main {
                 }
             }
 
-            ElementoTaxonomico activo = misSelecciones.get(seleccionIdx);
+            Cultivos activo = misSelecciones.get(seleccionIdx);
             ContextoAgroCiclo.setTaxonomia(activo.getCategoria()); // Importante para el contexto
             System.out.println(">>> Trabajando con: " + activo.getNombre());
 
             boolean volverATaxonomia = false;
             while (!volverATaxonomia && !salirDefinitivo) {
                 System.out.println("\n--- MENU PRINCIPAL (" + activo.getNombre() + ") ---");
-                System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Volver a Taxonomía | 7. Salir");
+                System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Volver a Taxonomía | 7. Salir| 8. Pruebas");
                 System.out.print("Elija una opción (1-7): ");
 
                 if (scanner.hasNextInt()) {
                     int opcion = scanner.nextInt();
                     switch (opcion) {
-                        case 1, 2, 3, 4, 5 -> System.out.println("Ejecutando lógica de opción " + opcion);
-                        case 6 -> {
+                        case 1:
+                            // Captura de datos
+                            System.out.print("ID: "); String id = scanner.next();
+                            System.out.print("Suelo: "); String suelo = scanner.next();
+
+                            // Delegación: Crear el objeto y pasárselo al Gestor
+                            Parcela nuevaParcela = new Parcela(id, suelo, true, null);
+                            gestorSuelo.registrarParcela(nuevaParcela); // <<< ¡Aquí está la conexión!
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            System.out.println("Ejecutando módulo correspondiente...");
+                            break;
+
+                        case 6 : {
                             System.out.println("Regresando a Taxonomía...");
                             volverATaxonomia = true; // Esto rompe el bucle del menú y vuelve al while superior
+                            break;
+
                         }
-                        case 7 -> {
+                        case 7 : {
                             System.out.println("Saliendo de AgroCiclo.");
                             volverATaxonomia = true;
                             salirDefinitivo = true; // Esto rompe el menú Y el bucle exterior
+                            break;
                         }
-                        default -> System.out.println("--- Error: Opción inválida. ---");
+                        case 8:
+                            // Verifica si p1 (o como se llame tu variable parcela) existe
+                            if (p1 != null) {
+                                Pruebas.imprimirEstadoParcela(p1);
+                            } else {
+                                System.out.println("--- Error: Debes crear una parcela primero. ---");
+                            }
+                            break;
+                        default : System.out.println("--- Error: Opción inválida. ---");
                     }
                 } else {
                     System.out.println("--- Error: Entrada inválida. ---");

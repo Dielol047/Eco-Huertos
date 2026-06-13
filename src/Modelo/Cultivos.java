@@ -1,17 +1,17 @@
 package Modelo;
 
-public class ElementoTaxonomico {
+public class Cultivos {
     private String nombre;
     private String categoria;
     private double factorK;
     private double baseTermica;
     private int tasaMaduracion;
-    private double metrosCuadrados; // Nuevo atributo
+    private double areaKm2; // Nuevo atributo
 
-    public ElementoTaxonomico(String categoria,String nombre, double metrosCuadrados) {
+    public Cultivos(String categoria,String nombre, double metrosCuadrados) {
         this.categoria=categoria;
         this.nombre = nombre;
-        this.metrosCuadrados = metrosCuadrados;
+        this.areaKm2 = areaKm2;
         // Asignamos valores desde el contexto
         ContextoAgroCiclo.setTaxonomia(nombre);
         this.factorK = ContextoAgroCiclo.getFactorK();
@@ -26,5 +26,5 @@ public class ElementoTaxonomico {
     public double getFactorK() { return factorK; }
     public double getBaseTermica() { return baseTermica; }
     public int getTasaMaduracion() { return tasaMaduracion; }
-    public double getMetrosCuadrados() { return metrosCuadrados; }
+    public double getAreaKm2() { return areaKm2; }
 }

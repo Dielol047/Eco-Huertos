@@ -2,20 +2,34 @@ package Modelo;
 
 public class Parcela {
     private String idParcela;
-    private double areaM2;
     private String tipoDeSuelo;
-    private String estado;
-    private String ultimoCultivo;
+    private Boolean disponible;
 
-    public Parcela(String id, double area, String tipoSuelo) {
-        this.idParcela = id;
-        this.areaM2 = area;
-        this.tipoDeSuelo = tipoSuelo;
-        this.estado = "Disponible";
+    // 1. Asegúrate de declarar la variable exactamente así:
+    private Cultivos cultivoActual;
+
+    public Parcela(String idParcela, String tipoDeSuelo, Boolean disponible, Cultivos cultivoActual) {
+        this.idParcela = idParcela;
+        this.tipoDeSuelo = tipoDeSuelo;
+        this.disponible = disponible;
+        // 2. Y asegúrate de que el 'this' coincida con la variable declarada arriba:
+        this.cultivoActual = cultivoActual;
     }
-    public String getIdParcela() { return idParcela; }
-    public String getUltimoCultivo() { return ultimoCultivo; }
-    public void setUltimoCultivo(String cultivo) { this.ultimoCultivo = cultivo; }
-    public String getEstado() { return estado; }
 
+    // 3. Y finalmente, que el getter use el mismo nombre:
+    public Cultivos getCultivoActual() {
+        return this.cultivoActual;
+    }
+    // Dentro de la clase Parcela
+    public String getIdParcela() {
+        return this.idParcela;
+    }
+
+    public String getTipoDeSuelo() {
+        return this.tipoDeSuelo;
+    }
+
+    public Boolean getDisponible() {
+        return this.disponible;
+    }
 }
