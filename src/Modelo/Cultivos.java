@@ -1,6 +1,8 @@
 package Modelo;
 
 public class Cultivos {
+    private static int contadorIDs = 1;
+    private int id;
     private String nombre;
     private String categoria;
     private double factorK;
@@ -18,6 +20,7 @@ public class Cultivos {
         this.baseTermica = ContextoAgroCiclo.getBaseTermica();
         this.tasaMaduracion = ContextoAgroCiclo.getTasaMaduracion();
         ContextoAgroCiclo.getTasaMaduracion();
+        this.id = contadorIDs++;
     }
 
     // Getters
@@ -27,4 +30,7 @@ public class Cultivos {
     public double getBaseTermica() { return baseTermica; }
     public int getTasaMaduracion() { return tasaMaduracion; }
     public double getAreaKm2() { return areaKm2; }
+    public int getId() {
+        return id;
+    }
 }

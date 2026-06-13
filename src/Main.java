@@ -88,7 +88,8 @@ public class Main {
             System.out.println("\n=== SELECCIÓN DE CULTIVO ACTIVO ===");
             System.out.println("Actualmente hay " + misSelecciones.size() + " registrado(s).");
             for (int i = 0; i < misSelecciones.size(); i++) {
-                System.out.println((i + 1) + ". " + misSelecciones.get(i).getNombre() + " (" + misSelecciones.get(i).getCategoria() + ")");
+                Cultivos c = misSelecciones.get(i);
+                System.out.println((i + 1) + ". ID: " + c.getId() + " - " + c.getNombre() + " (" + c.getCategoria() + ")");
             }
 
             // Selección de cultivo
