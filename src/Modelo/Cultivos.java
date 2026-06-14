@@ -9,6 +9,7 @@ public class Cultivos {
     private double baseTermica;
     private int tasaMaduracion;
     private double areaKm2; // Nuevo atributo
+    private Parcela parcelaAsignada;
 
     public Cultivos(String categoria,String nombre, double metrosCuadrados) {
         this.categoria=categoria;
@@ -21,6 +22,7 @@ public class Cultivos {
         this.tasaMaduracion = ContextoAgroCiclo.getTasaMaduracion();
         ContextoAgroCiclo.getTasaMaduracion();
         this.id = contadorIDs++;
+        this.parcelaAsignada = null;
     }
 
     // Getters
@@ -33,4 +35,11 @@ public class Cultivos {
     public int getId() {
         return id;
     }
+    public void setParcelaAsignada(Parcela parcela) {
+        this.parcelaAsignada = parcela;
+    }
+    public Parcela getParcelaAsignada() {
+        return parcelaAsignada;
+    }
+    
 }
