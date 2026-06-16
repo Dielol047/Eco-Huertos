@@ -1,0 +1,5 @@
+# Archivos de compilación de Java
+*.class
+out/
+.idea/
+*.iml
