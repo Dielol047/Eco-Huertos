@@ -41,5 +41,5 @@ public class Cultivos {
     public Parcela getParcelaAsignada() {
         return parcelaAsignada;
     }
-    
+
 }

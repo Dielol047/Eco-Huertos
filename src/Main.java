@@ -1,71 +1,58 @@
 import Modelo.*;
 import Negocio.*;
-import Interfaz.*;
-import Negocio.GestorSuelo;
-import Modelo.ContextoAgroCiclo;
-import Modelo.Cultivos;
-import Modelo.Parcela;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Locale;
+
 public class Main {
-    static GestorSuelo gestorSuelo = new GestorSuelo();
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
         ArrayList<Cultivos> misSelecciones = new ArrayList<>();
+        ArrayList<Parcela> parcelas = new ArrayList<>();
         boolean salirDefinitivo = false;
-        Parcela p1 = null; // Declarada aquí para que el case 8 la reconozca
 
-        // Debes declarar e instanciar el gestor antes de usarlo
         GestorSuelo gestorSuelo = new GestorSuelo();
         GestorPersonal gestorPer = new GestorPersonal();
         GestorEstadistica gestorEst = new GestorEstadistica();
 
         System.out.println("=== BIENVENIDO A AGROCICLO ===");
 
-
         while (!salirDefinitivo) {
             String taxonomia = "";
+            while (taxonomia.equals("")) {
+                System.out.println("Seleccione la rama taxonómica de trabajo:");
+                System.out.println("1. Solanum | 2. Musáceas | 3. Cucurbitáceas | 4. Leguminosas | 5. Brasicáceas | 6. Guia taxonomica");
+                System.out.print("Opción (1-6): ");
 
-        // Cambiamos la lógica: el ciclo se repite mientras NO hayamos seleccionado una opción válida (1-5)
-        while (taxonomia.equals("")) {
-
-            System.out.println("Seleccione la rama taxonómica de trabajo:");
-            System.out.println("1. Solanum | 2. Musáceas | 3. Cucurbitáceas | 4. Leguminosas | 5. Brasicáceas | 6. Guia taxonomica");
-            System.out.print("Opción (1-6): ");
-
-            if (scanner.hasNextInt()) {
-                int sel = scanner.nextInt();
-
-                if (sel >= 1 && sel <= 5) {
-                    // Si elige del 1 al 5, asignamos la taxonomia (esto romperá el while)
-                    taxonomia = switch(sel) {
-                        case 1 -> "Solanum";
-                        case 2 -> "Musáceas";
-                        case 3 -> "Cucurbitáceas";
-                        case 4 -> "Leguminosas";
-                        case 5 -> "Brasicáceas";
-                        default -> "";
-                    };
-                } else if (sel == 6) {
-                    // Si elige 6, imprimimos la guía y NO asignamos nada a taxonomia
-                    System.out.println("\n--- CATÁLOGO TAXONÓMICO Y CARACTERÍSTICAS ---");
-                    System.out.println("1. Solanum: Tomate, papa, pimiento, berenjena.");
-                    System.out.println("2. Musáceas: Plátano, banano, guineo.");
-                    System.out.println("3. Cucurbitáceas: Zapallo, calabaza, pepino, melón, sandía.");
-                    System.out.println("4. Leguminosas: Frijol, arveja, haba, lenteja.");
-                    System.out.println("5. Brasicáceas: Brócoli, col, coliflor, rábano, nabos.");
-                    System.out.println("----------------------------------------------\n");
+                if (scanner.hasNextInt()) {
+                    int sel = scanner.nextInt();
+                    if (sel >= 1 && sel <= 5) {
+                        taxonomia = switch(sel) {
+                            case 1 -> "Solanum";
+                            case 2 -> "Musáceas";
+                            case 3 -> "Cucurbitáceas";
+                            case 4 -> "Leguminosas";
+                            case 5 -> "Brasicáceas";
+                            default -> "";
+                        };
+                    } else if (sel == 6) {
+                        System.out.println("\n--- CATÁLOGO TAXONÓMICO Y CARACTERÍSTICAS ---");
+                        System.out.println("1. Solanum: Tomate, papa, pimiento, berenjena.");
+                        System.out.println("2. Musáceas: Plátano, banano, guineo.");
+                        System.out.println("3. Cucurbitáceas: Zapallo, calabaza, pepino, melón, sandía.");
+                        System.out.println("4. Leguminosas: Frijol, arveja, haba, lenteja.");
+                        System.out.println("5. Brasicáceas: Brócoli, col, coliflor, rábano, nabos.");
+                        System.out.println("----------------------------------------------\n");
+                    } else {
+                        System.out.println("--- Error: Opción fuera de rango (1-6). ---");
+                    }
                 } else {
-                    System.out.println("--- Error: Opción fuera de rango (1-6). ---");
+                    System.out.println("--- Error: Entrada inválida. Ingrese un número. ---");
+                    scanner.next();
                 }
-            } else {
-                System.out.println("--- Error: Entrada inválida. Ingrese un número. ---");
-                scanner.next();
             }
-        }
-        ContextoAgroCiclo.setTaxonomia(taxonomia);
-        System.out.println(">>> Sistema configurado exitosamente para: " + taxonomia);
+            ContextoAgroCiclo.setTaxonomia(taxonomia);
+            System.out.println(">>> Sistema configurado exitosamente para: " + taxonomia);
 
             System.out.print("Nombre del cultivo: ");
             scanner.nextLine();
@@ -86,13 +73,12 @@ public class Main {
             misSelecciones.add(new Cultivos(taxonomia, nombreCultivo, (int)km2));
             System.out.println("¡Objeto creado correctamente!");
             System.out.println("\n=== SELECCIÓN DE CULTIVO ACTIVO ===");
-            System.out.println("Actualmente hay " + misSelecciones.size() + " registrado(s).");
+            
             for (int i = 0; i < misSelecciones.size(); i++) {
                 Cultivos c = misSelecciones.get(i);
                 System.out.println((i + 1) + ". ID: " + c.getId() + " - " + c.getNombre() + " (" + c.getCategoria() + ")");
             }
 
-            // Selección de cultivo
             int seleccionIdx = -1;
             while (seleccionIdx < 0 || seleccionIdx >= misSelecciones.size()) {
                 System.out.print("Elija el número del cultivo para trabajar (1-" + misSelecciones.size() + "): ");
@@ -103,69 +89,92 @@ public class Main {
                     }
                 } else {
                     System.out.println("--- Error: Entrada inválida. Por favor ingrese un número. ---");
-                    scanner.next(); // Limpiar entrada
+                    scanner.next();
                 }
             }
 
             Cultivos activo = misSelecciones.get(seleccionIdx);
-            ContextoAgroCiclo.setTaxonomia(activo.getCategoria()); // Importante para el contexto
+            ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
             System.out.println(">>> Trabajando con: " + activo.getNombre());
 
             boolean volverATaxonomia = false;
             while (!volverATaxonomia && !salirDefinitivo) {
                 System.out.println("\n--- MENU PRINCIPAL (" + activo.getNombre() + ") ---");
-                System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Volver a Taxonomía | 7. Salir| 8. Pruebas");
-                System.out.print("Elija una opción (1-7): ");
+                System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Volver a Taxonomía | 7. Salir| 8. Ver Parcelas");
+                System.out.print("Elija una opción: ");
 
                 if (scanner.hasNextInt()) {
                     int opcion = scanner.nextInt();
                     switch (opcion) {
-                        case 1:
-                            // Captura de datos
-                            System.out.print("ID: "); String id = scanner.next();
-                            System.out.print("Suelo: "); String suelo = scanner.next();
+                                                                        case 1:
+                            int opcionSuelo = 0;
+                            String suelo = "";
+                            while (suelo.isEmpty()) {
+                                System.out.println("\n--- SELECCIONE TIPO DE SUELO ---");
+                                System.out.println("1. Arenoso");
+                                System.out.println("2. Arcilloso");
+                                System.out.println("3. Franco");
+                                System.out.println("4. Limoso");
+                                System.out.println("5. Organico");
+                                System.out.println("6. Ver información de suelos");
+                                System.out.print("Opción (1-6): ");
 
-                            // Delegación: Crear el objeto y pasárselo al Gestor
-                            Parcela nuevaParcela = new Parcela(id, suelo, true, null);
-                            gestorSuelo.registrarParcela(nuevaParcela); // <<< ¡Aquí está la conexión!
-                            break;
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                            System.out.println("Ejecutando módulo correspondiente...");
-                            break;
+                                if (scanner.hasNextInt()) {
+                                    opcionSuelo = scanner.nextInt();
+                                    switch (opcionSuelo) {
+                                        case 1 -> suelo = "Arenoso";
+                                        case 2 -> suelo = "Arcilloso";
+                                        case 3 -> suelo = "Franco";
+                                        case 4 -> suelo = "Limoso";
+                                        case 5 -> suelo = "Organico";
+                                        case 6 -> {
+                                            System.out.println("\n--- INFORMACIÓN DE SUELOS ---");
+                                            System.out.println("1. Suelo Arenoso: Suelen ser secos, filtran muy rápido el agua y tienen pocos nutrientes, pero se calientan rápido.");
+                                            System.out.println("2. Suelo Arcilloso: Retienen mucho el agua y los nutrientes, pero tienden a compactarse y ser pesados (difíciles de trabajar).");
+                                            System.out.println("3. Suelo Franco (Limoso/Arcillo-Arenoso): Es el 'Golden Standard' o 'suelo ideal'. Es una mezcla equilibrada que retiene suficiente humedad pero permite el paso del aire y las raíces.");
+                                            System.out.println("4. Suelo Limoso: Tienen partículas de tamaño intermedio, retienen humedad pero son propensos a la erosión si no tienen cobertura vegetal.");
+                                            System.out.println("5. Suelo Orgánico (Turba o Humífero): Muy negros, muy fértiles y retienen muchísima humedad. Típicos de zonas que antes eran pantanosas o tienen mucha materia orgánica.");
+                                            System.out.println("------------------------------\n");
+                                        }
+                                        default -> System.out.println("--- Error: Opción fuera de rango (1-6). ---");
+                                    }
+                                } else {
+                                    System.out.println("--- Error: Entrada inválida. Ingrese un número. ---");
+                                    scanner.next();
+                                }
+                            }
 
-                        case 6 : {
-                            System.out.println("Regresando a Taxonomía...");
-                            volverATaxonomia = true; // Esto rompe el bucle del menú y vuelve al while superior
+                            Parcela nuevaParcela = new Parcela(suelo, true, activo);
+                            parcelas.add(nuevaParcela);
+                            gestorSuelo.registrarParcela(nuevaParcela);
                             break;
-
-                        }
-                        case 7 : {
-                            System.out.println("Saliendo de AgroCiclo.");
+                        case 6: 
                             volverATaxonomia = true;
-                            salirDefinitivo = true; // Esto rompe el menú Y el bucle exterior
                             break;
-                        }
+
+                        case 7: 
+                            volverATaxonomia = true;
+                            salirDefinitivo = true;
+                            break;
+
                         case 8:
-                            // Verifica si p1 (o como se llame tu variable parcela) existe
-                            if (p1 != null) {
-                                Pruebas.imprimirEstadoParcela(p1);
+                            if (parcelas.isEmpty()) {
+                                System.out.println("--- Error: No hay parcelas registradas. ---");
                             } else {
-                                System.out.println("--- Error: Debes crear una parcela primero. ---");
+                                for (Parcela p : parcelas) {
+                                    Pruebas.imprimirEstadoParcela(p);
+                                }
                             }
                             break;
-                        default : System.out.println("--- Error: Opción inválida. ---");
+
+                        default: System.out.println("--- Error: Opción inválida. ---");
                     }
                 } else {
                     System.out.println("--- Error: Entrada inválida. ---");
                     scanner.next();
                 }
             }
-        } // Fin del while (!salirDefinitivo)
-            scanner.close();
         }
+        scanner.close();
     }
-
-
+}
