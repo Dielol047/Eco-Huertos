@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Eco Huertos:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Eco_Huertos_jar</output-path>
-    <root id="archive" name="Eco Huertos.jar">
-      <element id="module-output" name="Eco Huertos" />
-    </root>
-  </artifact>
-</component>
