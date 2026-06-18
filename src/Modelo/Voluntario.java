@@ -1,17 +1,15 @@
 package Modelo;
 
-public class Voluntario extends Persona{
-    private int nivelExperiencia;
-    private String certificacion;
-    private String horarioDisponibilidad;
+public class Voluntario extends Persona {
+    private int idCultivo;
+    private String cargo;
 
-    public Voluntario(String id, String nombre, String contacto, int nivelExp, String certificacion) {
+    public Voluntario(String id, String nombre, String contacto, int idCultivo, String cargo) {
         super(id, nombre, contacto);
-        this.nivelExperiencia = nivelExp;
-        this.certificacion = certificacion;
+        this.idCultivo = idCultivo;
+        this.cargo = cargo;
     }
-    public int getNivelExperiencia() { return nivelExperiencia; }
-    public void setNivelExperiencia(int nivel) { this.nivelExperiencia = nivel; }
-    public String getCertificacion() { return certificacion; }
 
+    public int getIdCultivo() { return idCultivo; }
+    public String getCargo() { return cargo; }
 }

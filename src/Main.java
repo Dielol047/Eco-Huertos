@@ -9,6 +9,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
         ArrayList<Cultivos> misSelecciones = new ArrayList<>();
         ArrayList<Parcela> parcelas = new ArrayList<>();
+        ArrayList<Voluntario> voluntarios = new ArrayList<>();
+        ArrayList<Trabajador> trabajadores = new ArrayList<>();
+        int contadorPersonal = 1;
         boolean salirDefinitivo = false;
 
         GestorSuelo gestorSuelo = new GestorSuelo();
@@ -106,7 +109,7 @@ public class Main {
                 if (scanner.hasNextInt()) {
                     int opcion = scanner.nextInt();
                     switch (opcion) {
-                                                                        case 1:
+                        case 1:
                             int opcionSuelo = 0;
                             String suelo = "";
                             while (suelo.isEmpty()) {
@@ -147,6 +150,162 @@ public class Main {
                             Parcela nuevaParcela = new Parcela(suelo, true, activo);
                             parcelas.add(nuevaParcela);
                             gestorSuelo.registrarParcela(nuevaParcela);
+                            break;
+                                                                                                               
+                        case 2:
+                            int opcionPersonal = 0;
+                            while (opcionPersonal != 4) {
+                                System.out.println("\n--- MENU PERSONAL ---");
+                                System.out.println("1. Registrar Voluntario");
+                                System.out.println("2. Registrar Trabajador");
+                                System.out.println("3. Ver información de trabajadores");
+                                System.out.println("4. Volver al menú principal");
+                                System.out.print("Opción (1-4): ");
+
+                                if (scanner.hasNextInt()) {
+                                    opcionPersonal = scanner.nextInt();
+                                    scanner.nextLine();
+
+                                    switch (opcionPersonal) {
+                                        case 1 -> {
+                                            String nomVol = "";
+                                            while (nomVol.isEmpty()) {
+                                                System.out.print("Nombre (solo letras): ");
+                                                nomVol = scanner.nextLine();
+                                                if (!nomVol.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+                                                    System.out.println("--- Error: El nombre no puede contener números. ---");
+                                                    nomVol = "";
+                                                }
+                                            }
+
+                                            String contVol = "";
+                                            while (contVol.isEmpty()) {
+                                                System.out.print("Contacto (solo números): ");
+                                                contVol = scanner.nextLine();
+                                                if (!contVol.matches("[0-9]+")) {
+                                                    System.out.println("--- Error: El contacto solo puede contener números. ---");
+                                                    contVol = "";
+                                                }
+                                            }
+
+                                            int opcionCargoVol = 0;
+                                            String cargoVol = "";
+                                            while (cargoVol.isEmpty()) {
+                                                System.out.println("\n--- SELECCIONE CARGO DE VOLUNTARIO ---");
+                                                System.out.println("1. Asistente de Campo: Apoyo operativo básico.");
+                                                System.out.println("2. Monitor de Plagas: Vigilancia y reporte de anomalías.");
+                                                System.out.println("3. Inspector de Suelos: Recolección de muestras y datos.");
+                                                System.out.println("4. Guía Logístico: Apoyo en inventario y movimiento de materiales.");
+                                                System.out.print("Opción (1-4): ");
+
+                                                if (scanner.hasNextInt()) {
+                                                    opcionCargoVol = scanner.nextInt();
+                                                    scanner.nextLine();
+                                                    cargoVol = switch (opcionCargoVol) {
+                                                        case 1 -> "Asistente de Campo";
+                                                        case 2 -> "Monitor de Plagas";
+                                                        case 3 -> "Inspector de Suelos";
+                                                        case 4 -> "Guía Logístico";
+                                                        default -> "";
+                                                    };
+                                                    if (cargoVol.isEmpty()) {
+                                                        System.out.println("--- Error: Opción fuera de rango (1-4). ---");
+                                                    }
+                                                } else {
+                                                    System.out.println("--- Error: Ingrese un número válido. ---");
+                                                    scanner.next();
+                                                    scanner.nextLine();
+                                                }
+                                            }
+
+                                            Voluntario v = new Voluntario(Integer.toString(contadorPersonal++), nomVol, contVol, activo.getId(), cargoVol);
+                                            voluntarios.add(v);
+                                            gestorPer.asignarTarea(v, "Registro inicial");
+                                            System.out.println("Voluntario registrado exitosamente con ID: " + v.getId());
+                                        }
+                                        case 2 -> {
+                                            String nomTra = "";
+                                            while (nomTra.isEmpty()) {
+                                                System.out.print("Nombre (solo letras): ");
+                                                nomTra = scanner.nextLine();
+                                                if (!nomTra.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+                                                    System.out.println("--- Error: El nombre no puede contener números. ---");
+                                                    nomTra = "";
+                                                }
+                                            }
+
+                                            String contTra = "";
+                                            while (contTra.isEmpty()) {
+                                                System.out.print("Contacto (solo números): ");
+                                                contTra = scanner.nextLine();
+                                                if (!contTra.matches("[0-9]+")) {
+                                                    System.out.println("--- Error: El contacto solo puede contener números. ---");
+                                                    contTra = "";
+                                                }
+                                            }
+
+                                            int opcionCargoTra = 0;
+                                            String cargoTra = "";
+                                            while (cargoTra.isEmpty()) {
+                                                System.out.println("\n--- SELECCIONE CARGO DE TRABAJADOR ---");
+                                                System.out.println("1. Administrador de Campo: Encargado de la gestión general.");
+                                                System.out.println("2. Técnico Agrícola: Especialista en cultivos y optimización.");
+                                                System.out.println("3. Encargado de Riego: Especialista en sistemas hídricos.");
+                                                System.out.println("4. Supervisor de Cosecha: Encargado de la recolección y calidad.");
+                                                System.out.print("Opción (1-4): ");
+
+                                                if (scanner.hasNextInt()) {
+                                                    opcionCargoTra = scanner.nextInt();
+                                                    scanner.nextLine();
+                                                    cargoTra = switch (opcionCargoTra) {
+                                                        case 1 -> "Administrador de Campo";
+                                                        case 2 -> "Técnico Agrícola";
+                                                        case 3 -> "Encargado de Riego";
+                                                        case 4 -> "Supervisor de Cosecha";
+                                                        default -> "";
+                                                    };
+                                                    if (cargoTra.isEmpty()) {
+                                                        System.out.println("--- Error: Opción fuera de rango (1-4). ---");
+                                                    }
+                                                } else {
+                                                    System.out.println("--- Error: Ingrese un número válido. ---");
+                                                    scanner.next();
+                                                    scanner.nextLine();
+                                                }
+                                            }
+
+                                            Trabajador t = new Trabajador(Integer.toString(contadorPersonal++), nomTra, contTra, cargoTra, activo.getId());
+                                            trabajadores.add(t);
+                                            System.out.println("Trabajador registrado exitosamente con ID: " + t.getId());
+                                        }
+                                        case 3 -> {
+                                            System.out.println("\n--- INFORMACIÓN DE TRABAJADORES ---");
+                                            if (voluntarios.isEmpty() && trabajadores.isEmpty()) {
+                                                System.out.println("No hay personal registrado.");
+                                            } else {
+                                                if (!voluntarios.isEmpty()) {
+                                                    System.out.println("\n>> Voluntarios:");
+                                                    for (Voluntario v : voluntarios) {
+                                                        System.out.println("  ID: " + v.getId() + " | ID Cultivo: " + v.getIdCultivo() + " | Nombre: " + v.getNombre() + " | Contacto: " + v.getContacto() + " | Cargo: " + v.getCargo());
+                                                    }
+                                                }
+                                                if (!trabajadores.isEmpty()) {
+                                                    System.out.println("\n>> Trabajadores:");
+                                                    for (Trabajador t : trabajadores) {
+                                                        System.out.println("  ID: " + t.getId() + " | ID Cultivo: " + t.getIdCultivo() + " | Nombre: " + t.getNombre() + " | Contacto: " + t.getContacto() + " | Cargo: " + t.getCargo());
+                                                    }
+                                                }
+                                            }
+                                            System.out.println("------------------------------\n");
+                                        }
+                                        case 4 -> {}
+                                        default -> System.out.println("--- Error: Opción fuera de rango (1-4). ---");
+                                    }
+                                } else {
+                                    System.out.println("--- Error: Entrada inválida. Ingrese un número. ---");
+                                    scanner.next();
+                                }
+                            }
                             break;
                         case 6: 
                             volverATaxonomia = true;
