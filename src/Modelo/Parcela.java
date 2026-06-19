@@ -27,6 +27,10 @@ public class Parcela {
         return this.tipoDeSuelo;
     }
 
+    public void setTipoDeSuelo(String tipoDeSuelo) {
+        this.tipoDeSuelo = tipoDeSuelo;
+    }
+
     public Boolean getDisponible() {
         return this.disponible;
     }

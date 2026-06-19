@@ -14,4 +14,5 @@ public class Trabajador extends Persona {
 
     public String getCargo() { return cargo; }
     public int getIdCultivo() { return idCultivo; }
+    public void setCargo(String cargo) { this.cargo = cargo; }
 }
