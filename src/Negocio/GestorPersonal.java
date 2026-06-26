@@ -93,7 +93,7 @@ public class GestorPersonal {
         System.out.println("Trabajador registrado exitosamente con ID: " + t.getId());
     }
 
-    // --- MENÚ PRINCIPAL DEL GESTOR ---
+       // --- MENÚ PRINCIPAL DEL GESTOR ---
     public void gestionarPersonal(Cultivos activo, ArrayList<Voluntario> voluntarios, ArrayList<Trabajador> trabajadores, Scanner scanner, int[] contador) {
         int opcionPersonal = 0;
         while (opcionPersonal != 4) {
@@ -112,20 +112,27 @@ public class GestorPersonal {
                             System.out.println("No hay personal registrado.");
                         } else {
                             if (!voluntarios.isEmpty()) {
-                                System.out.println("\n>> Voluntarios:");
+                                System.out.println("\n>> Voluntarios (Cultivo: " + activo.getNombre() + "):");
                                 for (int i = 0; i < voluntarios.size(); i++) {
                                     Voluntario v = voluntarios.get(i);
-                                    System.out.println("V" + (i + 1) + ". ID: " + v.getId() + " | Nombre: " + v.getNombre() + " | Contacto: " + v.getContacto() + " | Cargo: " + v.getCargo());
+                                    // FILTRO: Solo si coincide con el cultivo activo
+                                    if (v.getIdCultivo() == activo.getId()) {
+                                        System.out.println("V" + (i + 1) + ". ID: " + v.getId() + " | Nombre: " + v.getNombre() + " | Contacto: " + v.getContacto() + " | Cargo: " + v.getCargo());
+                                    }
                                 }
                             }
                             if (!trabajadores.isEmpty()) {
-                                System.out.println("\n>> Trabajadores:");
+                                System.out.println("\n>> Trabajadores (Cultivo: " + activo.getNombre() + "):");
                                 for (int i = 0; i < trabajadores.size(); i++) {
                                     Trabajador t = trabajadores.get(i);
-                                    System.out.println("T" + (i + 1) + ". ID: " + t.getId() + " | Nombre: " + t.getNombre() + " | Contacto: " + t.getContacto() + " | Cargo: " + t.getCargo());
+                                    // FILTRO: Solo si coincide con el cultivo activo
+                                    if (t.getIdCultivo() == activo.getId()) {
+                                        System.out.println("T" + (i + 1) + ". ID: " + t.getId() + " | Nombre: " + t.getNombre() + " | Contacto: " + t.getContacto() + " | Cargo: " + t.getCargo());
+                                    }
                                 }
                             }
                             
+                            // ... resto del código de respuestas (s/n) y edición ...
                             String respuesta = "";
                             while (!respuesta.equals("s") && !respuesta.equals("n")) {
                                 System.out.print("\n¿Desea editar a alguien? (s/n): ");
@@ -138,7 +145,7 @@ public class GestorPersonal {
                             if (respuesta.equals("s")) {
                                 String codigo = "";
                                 boolean codigoValido = false;
-                                while (!codigoValido) {
+                                                    while (!codigoValido) {
                                     System.out.print("Ingrese el código (ej: V1 o T1): ");
                                     codigo = scanner.next().toUpperCase();
                                     scanner.nextLine();
@@ -146,9 +153,19 @@ public class GestorPersonal {
                                     if (codigo.matches("[VT][0-9]+")) {
                                         int idx = Integer.parseInt(codigo.substring(1)) - 1;
                                         if (codigo.startsWith("V") && idx >= 0 && idx < voluntarios.size()) {
-                                            codigoValido = true;
+                                            // VALIDAR CULTIVO
+                                            if (voluntarios.get(idx).getIdCultivo() == activo.getId()) {
+                                                codigoValido = true;
+                                            } else {
+                                                System.out.println("--- Error: El voluntario no pertenece a este cultivo. ---");
+                                            }
                                         } else if (codigo.startsWith("T") && idx >= 0 && idx < trabajadores.size()) {
-                                            codigoValido = true;
+                                            // VALIDAR CULTIVO
+                                            if (trabajadores.get(idx).getIdCultivo() == activo.getId()) {
+                                                codigoValido = true;
+                                            } else {
+                                                System.out.println("--- Error: El trabajador no pertenece a este cultivo. ---");
+                                            }
                                         } else {
                                             System.out.println("--- Error: El código no existe. ---");
                                         }
@@ -324,4 +341,7 @@ public class GestorPersonal {
             }
         }
     }
-}
+    }
+    
+    
+    
