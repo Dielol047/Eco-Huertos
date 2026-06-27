@@ -26,7 +26,7 @@ public class ContextoAgroCiclo {
 
     public static double getBaseTermica() {
         switch (taxonomiaSeleccionada) {
-            case "Solanum": return 10.0;
+            case "Solanaceae": return 10.0;
             case "Musáceas": return 14.0;
             case "Cucurbitáceas": return 12.0;
             case "Leguminosas": return 8.0;

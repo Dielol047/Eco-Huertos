@@ -3,6 +3,7 @@ import Negocio.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Locale;
+import Negocio.GestorBiodata;
 
 public class Main {
     public static void main(String[] args) {
@@ -40,7 +41,7 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                         };
                     } else if (sel == 6) {
                         System.out.println("\n--- CATÁLOGO TAXONÓMICO Y CARACTERÍSTICAS ---");
-                        System.out.println("1. Solanum: Tomate, papa, pimiento, berenjena.");
+                        System.out.println("1. Solanaceae: Tomate, papa, pimiento, berenjena.");
                         System.out.println("2. Musáceas: Plátano, banano, guineo.");
                         System.out.println("3. Cucurbitáceas: Zapallo, calabaza, pepino, melón, sandía.");
                         System.out.println("4. Leguminosas: Frijol, arveja, haba, lenteja.");
@@ -73,10 +74,12 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                 }
             }
 
-            misSelecciones.add(new Cultivos(taxonomia, nombreCultivo, (int)km2));
-            System.out.println("¡Objeto creado correctamente!");
-            System.out.println("\n=== SELECCIÓN DE CULTIVO ACTIVO ===");
             
+                        // ... después de crear el objeto Cultivos en el Main
+            Cultivos nuevoCultivo = new Cultivos(taxonomia, nombreCultivo, km2);
+            misSelecciones.add(nuevoCultivo);
+            
+         
             for (int i = 0; i < misSelecciones.size(); i++) {
                 Cultivos c = misSelecciones.get(i);
                 System.out.println((i + 1) + ". ID: " + c.getId() + " - " + c.getNombre() + " (" + c.getCategoria() + ")");
@@ -100,10 +103,11 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
             ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
             System.out.println(">>> Trabajando con: " + activo.getNombre());
 
-          boolean volverATaxonomia = false;
+                      boolean volverATaxonomia = false;
             while (!volverATaxonomia && !salirDefinitivo) {
                 System.out.println("\n--- MENU PRINCIPAL (" + activo.getNombre() + ") ---");
-                System.out.println("1. Suelo | 2. Personal | 3. Biodata | 4. Estadística | 5. Optimizar | 6. Volver a Taxonomía | 7. Salir | 8. Ver Parcelas");
+                // Eliminados Biodata (3) y Ver Parcelas (8). Reenumeración aplicada:
+                System.out.println("1. Suelo | 2. Personal | 3. Estadística | 4. Optimizar | 5. Volver a Taxonomía | 6. Salir");
                 System.out.print("Elija una opción: ");
 
                 if (scanner.hasNextInt()) {
@@ -111,23 +115,12 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                     switch (opcion) {
                         case 1 -> gestorSuelo.gestionarSuelo(activo, parcelas, scanner);
                         case 2 -> gestorPer.gestionarPersonal(activo, voluntarios, trabajadores, scanner, contadorPersonal);
-                        case 3 -> System.out.println("Funcionalidad Biodata en desarrollo...");
-                        case 4 -> System.out.println("Funcionalidad Estadística en desarrollo...");
-                        case 5 -> System.out.println("Funcionalidad Optimizar en desarrollo...");
-                        case 6 -> volverATaxonomia = true;
-                        case 7 -> {
+                        case 3 -> System.out.println("Funcionalidad Estadística en desarrollo...");
+                        case 4 -> System.out.println("Funcionalidad Optimizar en desarrollo...");
+                        case 5 -> volverATaxonomia = true;
+                        case 6 -> {
                             volverATaxonomia = true;
                             salirDefinitivo = true;
-                        }
-                        case 8 -> {
-                            if (parcelas.isEmpty()) {
-                                System.out.println("--- Error: No hay parcelas registradas. ---");
-                            } else {
-                                for (Parcela p : parcelas) {
-                                    // Asegúrate de tener acceso a Pruebas, sino, considera mover este log a GestorSuelo
-                                    Pruebas.imprimirEstadoParcela(p);
-                                }
-                            }
                         }
                         default -> System.out.println("--- Error: Opción inválida. ---");
                     }

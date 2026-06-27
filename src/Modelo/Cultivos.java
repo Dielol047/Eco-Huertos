@@ -1,4 +1,6 @@
 package Modelo;
+import Negocio.GestorBiodata;
+
 
 public class Cultivos {
     private static int contadorIDs = 1;
@@ -10,12 +12,21 @@ public class Cultivos {
     private int tasaMaduracion;
     private double areaKm2; // Nuevo atributo
     private Parcela parcelaAsignada;
+    private int consumoNutrientes;
+    private int diasMaduracion;
+    private String caracteristica;
 
     public Cultivos(String categoria,String nombre, double metrosCuadrados) {
         this.categoria=categoria;
         this.nombre = nombre;
         this.areaKm2 = areaKm2;
         // Asignamos valores desde el contexto
+        GestorBiodata gestor = new GestorBiodata();
+        GestorBiodata.FamiliaBotanica familia = gestor.obtenerFamiliaPorCategoria(categoria);
+        
+        this.consumoNutrientes = familia.getConsumoNutrientesBase();
+        this.diasMaduracion = familia.getDiasMaduracionPromedio();
+        this.caracteristica = familia.getCaracteristica();
         ContextoAgroCiclo.setTaxonomia(nombre);
         this.factorK = ContextoAgroCiclo.getFactorK();
         this.baseTermica = ContextoAgroCiclo.getBaseTermica();
@@ -41,5 +52,8 @@ public class Cultivos {
     public Parcela getParcelaAsignada() {
         return parcelaAsignada;
     }
+     public int getConsumoNutrientes() { return consumoNutrientes; }
+    public int getDiasMaduracion() { return diasMaduracion; }
+    public String getCaracteristica() { return caracteristica; }
 
 }
