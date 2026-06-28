@@ -95,6 +95,7 @@ public class GestorPersonal {
 
        // --- MENÚ PRINCIPAL DEL GESTOR ---
     public void gestionarPersonal(Cultivos activo, ArrayList<Voluntario> voluntarios, ArrayList<Trabajador> trabajadores, Scanner scanner, int[] contador) {
+         
         int opcionPersonal = 0;
         while (opcionPersonal != 4) {
             System.out.println("\n--- MENU PERSONAL ---");
@@ -339,9 +340,12 @@ public class GestorPersonal {
                 scanner.next();
                 scanner.nextLine();
             }
-        }
+        
     }
     }
+    }
+    
+ 
     
     
     

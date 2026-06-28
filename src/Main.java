@@ -6,6 +6,7 @@ import java.util.Locale;
 import Negocio.GestorBiodata;
 
 public class Main {
+       static boolean salirDefinitivo = false;
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
         ArrayList<Cultivos> misSelecciones = new ArrayList<>();
@@ -13,7 +14,7 @@ public class Main {
         ArrayList<Voluntario> voluntarios = new ArrayList<>();
 ArrayList<Trabajador> trabajadores = new ArrayList<>();
         int[] contadorPersonal = {1};
-        boolean salirDefinitivo = false;
+       
 
         GestorSuelo gestorSuelo = new GestorSuelo();
         GestorPersonal gestorPer = new GestorPersonal();
@@ -80,56 +81,58 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
             misSelecciones.add(nuevoCultivo);
             
          
-            for (int i = 0; i < misSelecciones.size(); i++) {
-                Cultivos c = misSelecciones.get(i);
-                System.out.println((i + 1) + ". ID: " + c.getId() + " - " + c.getNombre() + " (" + c.getCategoria() + ")");
-            }
-
-            int seleccionIdx = -1;
-            while (seleccionIdx < 0 || seleccionIdx >= misSelecciones.size()) {
-                System.out.print("Elija el número del cultivo para trabajar (1-" + misSelecciones.size() + "): ");
-                if (scanner.hasNextInt()) {
-                    seleccionIdx = scanner.nextInt() - 1;
-                    if (seleccionIdx < 0 || seleccionIdx >= misSelecciones.size()) {
-                        System.out.println("--- Error: El número seleccionado no está en la lista. ---");
-                    }
-                } else {
-                    System.out.println("--- Error: Entrada inválida. Por favor ingrese un número. ---");
-                    scanner.next();
-                }
-            }
-
-            Cultivos activo = misSelecciones.get(seleccionIdx);
-            ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
-            System.out.println(">>> Trabajando con: " + activo.getNombre());
-
-                      boolean volverATaxonomia = false;
+             boolean volverATaxonomia = false;
             while (!volverATaxonomia && !salirDefinitivo) {
-                System.out.println("\n--- MENU PRINCIPAL (" + activo.getNombre() + ") ---");
-                // Eliminados Biodata (3) y Ver Parcelas (8). Reenumeración aplicada:
-                System.out.println("1. Suelo | 2. Personal | 3. Estadística | 4. Optimizar | 5. Volver a Taxonomía | 6. Salir");
+                System.out.println("\n--- LISTADO DE CULTIVOS ---");
+                for (int i = 0; i < misSelecciones.size(); i++) {
+                    Cultivos c = misSelecciones.get(i);
+                    System.out.println((i + 1) + ". ID: " + c.getId() + " - " + c.getNombre() + " (" + c.getCategoria() + ")");
+                }
+                System.out.print("Elija el número del cultivo (1-" + misSelecciones.size() + "): ");
+    
+                System.out.println("0. Añadir nuevo cultivo");
                 System.out.print("Elija una opción: ");
-
+                
                 if (scanner.hasNextInt()) {
-                    int opcion = scanner.nextInt();
-                    switch (opcion) {
-                        case 1 -> gestorSuelo.gestionarSuelo(activo, parcelas, scanner);
-                        case 2 -> gestorPer.gestionarPersonal(activo, voluntarios, trabajadores, scanner, contadorPersonal);
-                        case 3 -> System.out.println("Funcionalidad Estadística en desarrollo...");
-                        case 4 -> System.out.println("Funcionalidad Optimizar en desarrollo...");
-                        case 5 -> volverATaxonomia = true;
-                        case 6 -> {
-                            volverATaxonomia = true;
-                            salirDefinitivo = true;
-                        }
-                        default -> System.out.println("--- Error: Opción inválida. ---");
+                    int seleccionIdx = scanner.nextInt() - 1;
+                    if (seleccionIdx == -1) {
+                        volverATaxonomia = true;
+                    } else if (seleccionIdx >= 0 && seleccionIdx < misSelecciones.size()) {
+                        Cultivos activo = misSelecciones.get(seleccionIdx);
+                        ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
+                        System.out.println(">>> Trabajando con: " + activo.getNombre());
+                        ejecutarMenuPrincipal(activo, gestorSuelo, gestorPer, gestorEst, parcelas, voluntarios, trabajadores, scanner, contadorPersonal);
+                    } else {
+                        System.out.println("--- Error: Número fuera de rango. ---");
                     }
                 } else {
+                
                     System.out.println("--- Error: Entrada inválida. ---");
                     scanner.next();
                 }
             }
+        } // cierra while (!salirDefinitivo)
+    } // cierra main
+
+           public static void ejecutarMenuPrincipal(Cultivos activo, GestorSuelo gs, GestorPersonal gp, GestorEstadistica ge, ArrayList<Parcela> p, ArrayList<Voluntario> v, ArrayList<Trabajador> t, Scanner sc, int[] cp) {
+        while (true) {
+            System.out.println("\n--- Datos Cultivos (" + activo.getNombre() + ") ---");
+            System.out.println("1. Suelo | 2. Personal | 3. Estadística | 4. Optimizar | 5. Volver a Cultivos | 6. Salir");
+            System.out.print("Opción: ");
+            if (sc.hasNextInt()) {
+                int op = sc.nextInt();
+                switch (op) {
+                     case 1 -> gs.gestionarSuelo(activo, p, sc);
+                    case 2 -> gp.gestionarPersonal(activo, v, t, sc, cp);
+                    case 3 -> ge.mostrarEstadisticasClimaticas(activo, sc);
+                    case 4 -> System.out.println("Optimizar...");
+                    case 5 -> { return; }
+                    case 6 -> { salirDefinitivo = true; return; }
+                    default -> System.out.println("--- Error: Opción inválida. ---");
+                }
+            } else {
+                sc.next();
             }
-            }
-            }
-            
+        }
+    }
+} // cierra class Main

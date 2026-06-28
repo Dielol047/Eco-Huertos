@@ -15,6 +15,11 @@ public class Cultivos {
     private int consumoNutrientes;
     private int diasMaduracion;
     private String caracteristica;
+    private double tempMedia, tempMin, tempMax;
+    private double precipitacionAcumulada;
+    private double humedadRelativaMedia;
+    private double radiacionSolarPAR;
+    private boolean estadisticasCargadas = false;
 
     public Cultivos(String categoria,String nombre, double metrosCuadrados) {
         this.categoria=categoria;
@@ -35,6 +40,22 @@ public class Cultivos {
         this.id = contadorIDs++;
         this.parcelaAsignada = null;
     }
+    // Getters y Setters Climáticos
+    public boolean tieneEstadisticas() { return estadisticasCargadas; }
+    public void setEstadisticasCargadas(boolean valor) { this.estadisticasCargadas = valor; }
+
+    public double getTempMedia() { return tempMedia; }
+    public void setTempMedia(double v) { tempMedia = v; }
+    public double getTempMin() { return tempMin; }
+    public void setTempMin(double v) { tempMin = v; }
+    public double getTempMax() { return tempMax; }
+    public void setTempMax(double v) { tempMax = v; }
+    public double getPrecipitacion() { return precipitacionAcumulada; }
+    public void setPrecipitacion(double v) { precipitacionAcumulada = v; }
+    public double getHumedad() { return humedadRelativaMedia; }
+    public void setHumedad(double v) { humedadRelativaMedia = v; }
+    public double getRadiacion() { return radiacionSolarPAR; }
+    public void setRadiacion(double v) { radiacionSolarPAR = v; }
 
     // Getters
     public String getNombre() { return nombre; }
