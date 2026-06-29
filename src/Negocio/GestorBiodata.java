@@ -2,7 +2,7 @@ package Negocio;
 
 import Modelo.Cultivos;
 
-public class GestorBiodata {
+public class GestorBiodata implements Analizar {
 
     public enum FamiliaBotanica {
         SOLANUM(100, 110, "Alto consumo"),
@@ -54,5 +54,9 @@ public class GestorBiodata {
         System.out.println("- Consumo de Nutrientes Base: " + familia.getConsumoNutrientesBase() + " unidades");
         System.out.println("- Días de Maduración Promedio: " + familia.getDiasMaduracionPromedio() + " días");
         System.out.println("---------------------------");
+    }
+    @Override
+    public void imprimirReportePrediccion() {
+        // Implementación del reporte de predicción
     }
 }

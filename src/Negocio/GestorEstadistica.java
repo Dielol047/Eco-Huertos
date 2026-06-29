@@ -3,7 +3,7 @@ package Negocio;
 import Modelo.Cultivos;
 import java.util.Scanner;
 
-public class GestorEstadistica {
+public class GestorEstadistica implements Analizar {
 
     public void mostrarEstadisticasClimaticas(Cultivos cultivo, Scanner scanner) {
         if (cultivo.tieneEstadisticas()) {
@@ -67,6 +67,12 @@ public class GestorEstadistica {
                     case "hum" -> {
                         if (valor < 0 || valor > 100) throw new IllegalArgumentException("Error: La humedad debe estar entre 0 y 100%.");
                     }
+                    case "precip" -> {
+                        if (valor < 0) throw new IllegalArgumentException("Error: La precipitación no puede ser negativa.");
+                    }
+                    case "rad" -> {
+                        if (valor < 0) throw new IllegalArgumentException("Error: La radiación solar no puede ser negativa.");
+                    }
                 }
                 return valor;
             } catch (IllegalArgumentException e) {
@@ -74,4 +80,8 @@ public class GestorEstadistica {
             }
         }
     }
+    @Override
+    public void imprimirReportePrediccion() {
+        // Implementación del reporte de predicción
+}
 }

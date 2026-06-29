@@ -23,14 +23,16 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
         System.out.println("=== BIENVENIDO A AGROCICLO ===");
 
         while (!salirDefinitivo) {
-            String taxonomia = "";
+                        String taxonomia = "";
             while (taxonomia.equals("")) {
                 System.out.println("Seleccione la rama taxonómica de trabajo:");
                 System.out.println("1. Solanum | 2. Musáceas | 3. Cucurbitáceas | 4. Leguminosas | 5. Brasicáceas | 6. Guia taxonomica");
                 System.out.print("Opción (1-6): ");
 
-                if (scanner.hasNextInt()) {
-                    int sel = scanner.nextInt();
+                try {
+                    String entrada = scanner.next();
+                    int sel = Integer.parseInt(entrada);
+
                     if (sel >= 1 && sel <= 5) {
                         taxonomia = switch(sel) {
                             case 1 -> "Solanum";
@@ -49,11 +51,12 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                         System.out.println("5. Brasicáceas: Brócoli, col, coliflor, rábano, nabos.");
                         System.out.println("----------------------------------------------\n");
                     } else {
-                        System.out.println("--- Error: Opción fuera de rango (1-6). ---");
+                        throw new IllegalArgumentException("Opción fuera de rango (1-6).");
                     }
-                } else {
-                    System.out.println("--- Error: Entrada inválida. Ingrese un número. ---");
-                    scanner.next();
+                } catch (NumberFormatException e) {
+                    System.out.println("--- Error: Entrada inválida. Ingrese un número entero. ---");
+                } catch (IllegalArgumentException e) {
+                    System.out.println("--- Error: " + e.getMessage() + " ---");
                 }
             }
             ContextoAgroCiclo.setTaxonomia(taxonomia);
@@ -63,15 +66,17 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
             scanner.nextLine();
             String nombreCultivo = scanner.nextLine();
 
-            double km2 = -1;
+                      double km2 = -1;
             while (km2 <= 0) {
                 System.out.print("Ingrese la cantidad en km2 (mayor a 0): ");
-                if (scanner.hasNextDouble()) {
-                    km2 = scanner.nextDouble();
-                    if (km2 <= 0) System.out.println("Error: Debe ser positivo.");
-                } else {
-                    System.out.println("Error: Ingrese un número válido.");
-                    scanner.next();
+                try {
+                    String entradaTmp = scanner.next();
+                    km2 = Double.parseDouble(entradaTmp);
+                    if (km2 <= 0) throw new IllegalArgumentException("El área debe ser mayor a 0.");
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: Ingrese un valor numérico válido (use el punto para decimales).");
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error: " + e.getMessage());
                 }
             }
 
@@ -90,49 +95,61 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                 }
                 System.out.print("Elija el número del cultivo (1-" + misSelecciones.size() + "): ");
     
-                System.out.println("0. Añadir nuevo cultivo");
+                System.out.println("(0). Añadir nuevo cultivo,(-1).Salir del codigo");
                 System.out.print("Elija una opción: ");
-                
-                if (scanner.hasNextInt()) {
-                    int seleccionIdx = scanner.nextInt() - 1;
-                    if (seleccionIdx == -1) {
+                                try {
+                    String entradaStr = scanner.next();
+                    int entrada = Integer.parseInt(entradaStr);
+                    
+                    if (entrada == -1) {
+                        salirDefinitivo = true;
+                    } else if (entrada == 0) {
                         volverATaxonomia = true;
-                    } else if (seleccionIdx >= 0 && seleccionIdx < misSelecciones.size()) {
-                        Cultivos activo = misSelecciones.get(seleccionIdx);
-                        ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
-                        System.out.println(">>> Trabajando con: " + activo.getNombre());
-                        ejecutarMenuPrincipal(activo, gestorSuelo, gestorPer, gestorEst, parcelas, voluntarios, trabajadores, scanner, contadorPersonal);
                     } else {
-                        System.out.println("--- Error: Número fuera de rango. ---");
+                        int seleccionIdx = entrada - 1;
+                        if (seleccionIdx >= 0 && seleccionIdx < misSelecciones.size()) {
+                            Cultivos activo = misSelecciones.get(seleccionIdx);
+                            ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
+                            System.out.println(">>> Trabajando con: " + activo.getNombre());
+                            ejecutarMenuPrincipal(activo, gestorSuelo, gestorPer, gestorEst, parcelas, voluntarios, trabajadores, scanner, contadorPersonal);
+                        } else {
+                            throw new IndexOutOfBoundsException("Número fuera de rango.");
+                        }
                     }
-                } else {
-                
-                    System.out.println("--- Error: Entrada inválida. ---");
-                    scanner.next();
+                } catch (NumberFormatException e) {
+                    System.out.println("Error: Ingrese un número entero.");
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("Error: " + e.getMessage());
                 }
-            }
-        } // cierra while (!salirDefinitivo)
-    } // cierra main
+            } // Cierra while (!volverATaxonomia...)
+        } // Cierra while (!salirDefinitivo)
+    } // Cierra main
 
-           public static void ejecutarMenuPrincipal(Cultivos activo, GestorSuelo gs, GestorPersonal gp, GestorEstadistica ge, ArrayList<Parcela> p, ArrayList<Voluntario> v, ArrayList<Trabajador> t, Scanner sc, int[] cp) {
+   
+    
+    public static void ejecutarMenuPrincipal(Cultivos activo, GestorSuelo gs, GestorPersonal gp, GestorEstadistica ge, ArrayList<Parcela> p, ArrayList<Voluntario> v, ArrayList<Trabajador> t, Scanner sc, int[] cp) {
         while (true) {
             System.out.println("\n--- Datos Cultivos (" + activo.getNombre() + ") ---");
-            System.out.println("1. Suelo | 2. Personal | 3. Estadística | 4. Optimizar | 5. Volver a Cultivos | 6. Salir");
+            System.out.println("1. Suelo | 2. Personal | 3. Estadística | 4. Realizar Reporte | 5. Volver a Cultivos");
             System.out.print("Opción: ");
-            if (sc.hasNextInt()) {
-                int op = sc.nextInt();
+            
+            try {
+                String entrada = sc.next();
+                int op = Integer.parseInt(entrada);
+
                 switch (op) {
-                     case 1 -> gs.gestionarSuelo(activo, p, sc);
+                    case 1 -> gs.gestionarSuelo(activo, p, sc);
                     case 2 -> gp.gestionarPersonal(activo, v, t, sc, cp);
                     case 3 -> ge.mostrarEstadisticasClimaticas(activo, sc);
                     case 4 -> System.out.println("Optimizar...");
                     case 5 -> { return; }
-                    case 6 -> { salirDefinitivo = true; return; }
-                    default -> System.out.println("--- Error: Opción inválida. ---");
+                    default -> System.out.println("--- Error: Opción inválida. Elija entre 1 y 5. ---");
                 }
-            } else {
-                sc.next();
+            } catch (NumberFormatException e) {
+                System.out.println("--- Error: Entrada inválida. Por favor ingrese un número entero. ---");
+            } catch (Exception e) {
+                System.out.println("--- Error inesperado: " + e.getMessage() + " ---");
             }
         }
     }
-} // cierra class Main
+}

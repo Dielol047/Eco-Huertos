@@ -6,26 +6,37 @@ import Modelo.Cultivos;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class GestorPersonal {
+public class GestorPersonal implements Analizar {
 
     // --- MÉTODOS DE REGISTRO ---
     public void registrarVoluntario(Cultivos activo, ArrayList<Voluntario> voluntarios, Scanner scanner, int idContador) {
         String nomVol = "";
         while (nomVol.isEmpty()) {
-            System.out.print("Nombre (solo letras): ");
-            nomVol = scanner.nextLine();
-            if (!nomVol.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
-                System.out.println("--- Error: El nombre no puede contener números. ---");
-                nomVol = "";
+           try {
+                System.out.print("Nombre (solo letras): ");
+              nomVol = scanner.nextLine();
+               if (!nomVol.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {                   System.out.println("--- Error: El nombre no puede contener números. ---");
+                    nomVol = "";
+               }
+            } catch (Exception e) {
+                 System.out.println("--- Error: Entrada de texto inválida. ---");
+               if (scanner.hasNextLine()) scanner.nextLine();
             }
-        }
+         }
         String contVol = "";
         while (contVol.isEmpty()) {
             System.out.print("Contacto (solo números): ");
-            contVol = scanner.nextLine();
-            if (!contVol.matches("[0-9]+")) {
-                System.out.println("--- Error: El contacto solo puede contener números. ---");
-                contVol = "";
+            
+           try {
+                String entrada = scanner.nextLine();
+                if (!entrada.matches("[0-9]+")) throw new NumberFormatException();
+                long numTemp = Long.parseLong(entrada);
+                if (numTemp <= 0) throw new IllegalArgumentException("Debe ser mayor a 0.");
+                contVol = entrada;
+            } catch (NumberFormatException e) {
+                System.out.println("--- Error: Ingrese solo números enteros. ---");
+            } catch (IllegalArgumentException e) {
+                System.out.println("--- Error: " + e.getMessage() + " ---");
             }
         }
         int opcionCargoVol = 0;
@@ -34,64 +45,92 @@ public class GestorPersonal {
             System.out.println("\n--- SELECCIONE CARGO DE VOLUNTARIO ---");
             System.out.println("1. Asistente de Campo | 2. Monitor de Plagas | 3. Inspector de Suelos | 4. Guía Logístico");
             System.out.print("Opción (1-4): ");
-            if (scanner.hasNextInt()) {
-                opcionCargoVol = scanner.nextInt(); scanner.nextLine();
-                cargoVol = switch (opcionCargoVol) {
+            try  {
+                String entrada = scanner.next();
+                int opcion = Integer.parseInt(entrada);
+                scanner.nextLine();
+                //opcionCargoVol = scanner.nextInt(); scanner.nextLine();
+                cargoVol = switch (opcion) {
                     case 1 -> "Asistente de Campo";
                     case 2 -> "Monitor de Plagas";
                     case 3 -> "Inspector de Suelos";
                     case 4 -> "Guía Logístico";
-                    default -> "";
+                    default -> throw new IllegalArgumentException("Opción fuera de rango (1-4).");
                 };
-                if (cargoVol.isEmpty()) System.out.println("--- Error: Opción fuera de rango (1-4). ---");
-            } else { scanner.next(); scanner.nextLine(); }
+             } catch (NumberFormatException e) {
+                System.out.println("--- Error: Ingrese un número (1-4), no letras. ---");
+            } catch (IllegalArgumentException e) {
+                System.out.println("--- Error: " + e.getMessage() + " ---");
+            }
         }
+        
         Voluntario v = new Voluntario(Integer.toString(idContador), nomVol, contVol, activo.getId(), cargoVol);
         voluntarios.add(v);
         System.out.println("Voluntario registrado exitosamente con ID: " + v.getId());
     }
+    
+    
 
     public void registrarTrabajador(Cultivos activo, ArrayList<Trabajador> trabajadores, Scanner scanner, int idContador) {
         String nomTra = "";
         while (nomTra.isEmpty()) {
-            System.out.print("Nombre (solo letras): ");
-            nomTra = scanner.nextLine();
-            if (!nomTra.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
-                System.out.println("--- Error: El nombre no puede contener números. ---");
-                nomTra = "";
+            try {
+                 System.out.print("Nombre (solo letras): ");
+               nomTra = scanner.nextLine();
+                if (!nomTra.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+                     System.out.println("--- Error: El nombre no puede contener números. ---");
+                     nomTra = "";
+                 }
+            } catch (Exception e) {
+                 System.out.println("--- Error: Entrada de texto inválida. ---");
+               if (scanner.hasNextLine()) scanner.nextLine();
             }
         }
-        String contTra = "";
+       String contTra = "";
         while (contTra.isEmpty()) {
-            System.out.print("Contacto (solo números): ");
-            contTra = scanner.nextLine();
-            if (!contTra.matches("[0-9]+")) {
-                System.out.println("--- Error: El contacto solo puede contener números. ---");
-                contTra = "";
-            }
-        }
+             try {
+                 System.out.print("Contacto (solo números): ");
+                 contTra = scanner.nextLine();
+                 if (!contTra.matches("[0-9]+")) {
+                     System.out.println("--- Error: El contacto solo puede contener números. ---");
+                     contTra = "";
+                }
+          } catch (Exception e) {
+                 System.out.println("--- Error: Entrada de contacto inválida. ---");
+          if (scanner.hasNextLine()) scanner.nextLine();
+          }
+         }
         int opcionCargoTra = 0;
         String cargoTra = "";
         while (cargoTra.isEmpty()) {
             System.out.println("\n--- SELECCIONE CARGO DE TRABAJADOR ---");
             System.out.println("1. Admin. de Campo | 2. Técnico Agrícola | 3. Encargado Riego | 4. Sup. Cosecha");
             System.out.print("Opción (1-4): ");
-            if (scanner.hasNextInt()) {
-                opcionCargoTra = scanner.nextInt(); scanner.nextLine();
-                cargoTra = switch (opcionCargoTra) {
+            try  {
+                //opcionCargoTra = scanner.nextInt(); scanner.nextLine();
+                 String entrada = scanner.next();
+                int opcion = Integer.parseInt(entrada);
+                scanner.nextLine();
+                cargoTra = switch (opcion) {
                     case 1 -> "Administrador de Campo";
                     case 2 -> "Técnico Agrícola";
                     case 3 -> "Encargado de Riego";
                     case 4 -> "Supervisor de Cosecha";
-                    default -> "";
+                    default -> throw new IllegalArgumentException("Opción fuera de rango (1-4).");
                 };
-                if (cargoTra.isEmpty()) System.out.println("--- Error: Opción fuera de rango (1-4). ---");
-            } else { scanner.next(); scanner.nextLine(); }
+                
+              } catch (NumberFormatException e) {
+                System.out.println("--- Error: Ingrese un número (1-4). ---");
+            } catch (IllegalArgumentException e) {
+                System.out.println("--- Error: " + e.getMessage() + " ---");
+            }
         }
         Trabajador t = new Trabajador(Integer.toString(idContador), nomTra, contTra, cargoTra, activo.getId());
         trabajadores.add(t);
         System.out.println("Trabajador registrado exitosamente con ID: " + t.getId());
     }
+    
+    
 
        // --- MENÚ PRINCIPAL DEL GESTOR ---
     public void gestionarPersonal(Cultivos activo, ArrayList<Voluntario> voluntarios, ArrayList<Trabajador> trabajadores, Scanner scanner, int[] contador) {
@@ -102,13 +141,17 @@ public class GestorPersonal {
             System.out.println("1. Registrar Voluntario | 2. Registrar Trabajador | 3. Ver y editar | 4. Volver");
             System.out.print("Opción (1-4): ");
 
-            if (scanner.hasNextInt()) {
-                opcionPersonal = scanner.nextInt(); scanner.nextLine();
+            try {
+                String entrada = scanner.next();
+                opcionPersonal = Integer.parseInt(entrada);
+                //opcionPersonal = scanner.nextInt(); scanner.nextLine();
                 switch (opcionPersonal) {
                     case 1 -> { registrarVoluntario(activo, voluntarios, scanner, contador[0]); contador[0]++; }
                     case 2 -> { registrarTrabajador(activo, trabajadores, scanner, contador[0]); contador[0]++; }
                     case 3 -> {
                         System.out.println("\n--- GESTIÓN DE PERSONAL ---");
+                         int encontrados = 0; // Contador para validar personal del cultivo activo
+
                         if (voluntarios.isEmpty() && trabajadores.isEmpty()) {
                             System.out.println("No hay personal registrado.");
                         } else {
@@ -119,6 +162,7 @@ public class GestorPersonal {
                                     // FILTRO: Solo si coincide con el cultivo activo
                                     if (v.getIdCultivo() == activo.getId()) {
                                         System.out.println("V" + (i + 1) + ". ID: " + v.getId() + " | Nombre: " + v.getNombre() + " | Contacto: " + v.getContacto() + " | Cargo: " + v.getCargo());
+                                         encontrados++;
                                     }
                                 }
                             }
@@ -129,9 +173,16 @@ public class GestorPersonal {
                                     // FILTRO: Solo si coincide con el cultivo activo
                                     if (t.getIdCultivo() == activo.getId()) {
                                         System.out.println("T" + (i + 1) + ". ID: " + t.getId() + " | Nombre: " + t.getNombre() + " | Contacto: " + t.getContacto() + " | Cargo: " + t.getCargo());
+                                         encontrados++;
                                     }
                                 }
                             }
+                             if (encontrados == 0) {
+                            System.out.println("No hay personal registrado en este cultivo.");
+                        } else {
+                            // Solo entra aquí si hay alguien a quien editar
+                            //System.out.print("\n¿Desea editar a alguien? (s/n): ");
+                            //String respuesta = scanner.next().toLowerCase();
                             
                             // ... resto del código de respuestas (s/n) y edición ...
                             String respuesta = "";
@@ -328,23 +379,39 @@ public class GestorPersonal {
                                         }
                                     } while (opcionEditar != 4);
                                 }
+                        // Sustituir desde el final del bloque de edición (línea 366 aproximadamente) hasta el final del archivo:
                                 System.out.println("¡Edición completada!");
                             }
-                        }
+                        } // Esta llave cierra el 'else' de la validación 'if (encontrados == 0)'
+                    } // Esta llave cierra el case 3
                     }
+                    
                     case 4 -> System.out.println("Regresando...");
                     default -> System.out.println("--- Error: Opción fuera de rango (1-4). ---");
-                }
-            } else {
-                System.out.println("--- Error: Entrada inválida. ---");
-                scanner.next();
-                scanner.nextLine();
+                } // Esta llave cierra el switch
+            } catch (NumberFormatException e) {
+                System.out.println("--- Error: Entrada inválida. Ingrese un número entero. ---");
+                opcionPersonal = 0;
+            } catch (IllegalArgumentException e) {
+                System.out.println("--- Error: " + e.getMessage() + " ---");
+                opcionPersonal = 0;
             }
-        
+        } 
+
+
+    } 
+    @Override
+    public void imprimirReportePrediccion() {
+        // Implementación del reporte de predicción
     }
-    }
-    }
+} 
+
     
+
+
+             
+        
+  
  
     
     
