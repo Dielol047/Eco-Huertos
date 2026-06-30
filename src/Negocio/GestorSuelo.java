@@ -1,4 +1,5 @@
 package Negocio;
+import Interfaz.AgroCicloGUI;
 
 import Modelo.Parcela;
 import Modelo.Cultivos;
@@ -63,12 +64,15 @@ public class GestorSuelo implements Analizar {
                     case 4 -> suelo = "Limoso";
                     case 5 -> suelo = "Organico";
                     case 6 -> {
-                        System.out.println("\n--- INFORMACIÓN DE SUELOS ---");
-                        System.out.println("Arenoso: Se siente áspero y granuloso al tacto, es muy suelto y el agua se filtra de inmediato sin formar una masa.\n\n" +
+                        String info = "INFORMACIÓN DE SUELOS\n\n" +
+                                "Arenoso: Se siente áspero y granuloso al tacto, es muy suelto y el agua se filtra de inmediato sin formar una masa.\n\n" +
                                 "Arcilloso: Muy pegajoso y moldeable cuando está húmedo (parece plastilina), se vuelve duro como piedra y se agrieta al secarse.\n\n" +
                                 "Franco: Textura equilibrada y suave; forma una bola firme al apretarla con la mano que se deshace fácilmente con un toque.\n\n" +
                                 "Limoso: Tacto suave y jabonoso similar a la harina o al talco, no es pegajoso pero se compacta levemente al humedecerse.\n\n" +
-                                "Orgánico: Color oscuro o negro intenso, muy liviano y esponjoso, con restos vegetales visibles y olor característico a tierra de bosque.");
+                                "Orgánico: Color oscuro o negro intenso, muy liviano y esponjoso, con restos vegetales visibles y olor característico a tierra de bosque.";
+
+                        // 2. Llama directamente a la ventana aquí mismo
+                        javax.swing.JOptionPane.showMessageDialog(null, info, "Definición de Suelos", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     }
                     default -> throw new IllegalArgumentException("Opción fuera de rango. Ingrese un número del 1 al 6.");
                 }
