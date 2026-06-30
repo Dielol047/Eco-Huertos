@@ -95,10 +95,49 @@ public class GestorSuelo implements Analizar {
     public void registrarParcela(Parcela p) {
         System.out.println("[GestorSuelo] Guardando nueva parcela: " + p.getIdParcela());
     }
-    @Override
-    public void imprimirReportePrediccion() {
-        // Implementación del reporte de predicción
-        }
+   @Override
+public void imprimirReportePrediccion(Cultivos c) {
+    System.out.println(" Reporte Suelo");
+     if (c == null || c.getParcelaAsignada() == null) {
+        System.out.println("--- Reporte Suelo: Sin parcela asignada para " + (c != null ? c.getNombre() : "el cultivo") + " ---");
+        return;
+    }
 
+     String tipoSuelo = c.getParcelaAsignada().getTipoDeSuelo().toLowerCase();
+        double cs = switch (tipoSuelo) {
+            case "arenoso" -> 0.50;
+            case "arcilloso" -> 0.75;
+            case "limoso" -> 0.90;
+            case "organico" -> 1.20;
+            default -> 1.00; // Franco
+        };
+
+        // Asumimos un índice hídrico base si el cultivo tiene estadísticas
+        double iAgua = c.tieneEstadisticas() ? (c.getPrecipitacion() / 100.0) * (c.getHumedad() / 100.0) : 0.5;
+        double eAbs = Math.min(1.0, iAgua * cs);
+        double rc = (1.0 - cs) * 100.0;
+
+        System.out.println("\n--- ANÁLISIS TÉCNICO DE SUELO (" + c.getParcelaAsignada().getTipoDeSuelo() + ") ---");
+        System.out.printf("Coeficiente de Soporte (Cs): %.2f\n", cs);
+        System.out.printf("Eficiencia de Absorción Hídrica (Eabs): %.2f\n", eAbs);
+        System.out.printf("Riesgo de Compactación (Rc): %.2f%%\n", Math.max(0, rc));
+        System.out.println("-------------------------------------------------------------");
+
+        if (tipoSuelo.equals("arenoso")) {
+            System.out.println(" Alerta: Baja retención hídrica. El agua se filtra rápidamente.");
+        } else if (rc > 20) {
+            System.out.println(" Alerta: Riesgo de compactación elevado. Posible déficit de oxígeno en raíces.");
+        }
+        else {
+        System.out.println(" Suelo con buen drenaje y aireación. Condiciones óptimas.");
+    }
+    }
+
+
+        
+    
+    
 }
+
+
 

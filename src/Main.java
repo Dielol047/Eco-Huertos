@@ -19,7 +19,7 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
         GestorSuelo gestorSuelo = new GestorSuelo();
         GestorPersonal gestorPer = new GestorPersonal();
         GestorEstadistica gestorEst = new GestorEstadistica();
-
+        GestorBiodata gestorBio = new GestorBiodata();
         System.out.println("=== BIENVENIDO A AGROCICLO ===");
 
         while (!salirDefinitivo) {
@@ -111,7 +111,7 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                             Cultivos activo = misSelecciones.get(seleccionIdx);
                             ContextoAgroCiclo.setTaxonomia(activo.getCategoria());
                             System.out.println(">>> Trabajando con: " + activo.getNombre());
-                            ejecutarMenuPrincipal(activo, gestorSuelo, gestorPer, gestorEst, parcelas, voluntarios, trabajadores, scanner, contadorPersonal);
+                            ejecutarMenuPrincipal(activo, gestorSuelo, gestorPer, gestorEst,gestorBio, parcelas, voluntarios, trabajadores, scanner, contadorPersonal);
                         } else {
                             throw new IndexOutOfBoundsException("Número fuera de rango.");
                         }
@@ -127,10 +127,10 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
 
    
     
-    public static void ejecutarMenuPrincipal(Cultivos activo, GestorSuelo gs, GestorPersonal gp, GestorEstadistica ge, ArrayList<Parcela> p, ArrayList<Voluntario> v, ArrayList<Trabajador> t, Scanner sc, int[] cp) {
+    public static void ejecutarMenuPrincipal(Cultivos activo, GestorSuelo gs, GestorPersonal gp, GestorEstadistica ge,GestorBiodata gb, ArrayList<Parcela> p, ArrayList<Voluntario> v, ArrayList<Trabajador> t, Scanner sc, int[] cp) {
         while (true) {
             System.out.println("\n--- Datos Cultivos (" + activo.getNombre() + ") ---");
-            System.out.println("1. Suelo | 2. Personal | 3. Estadística | 4. Realizar Reporte | 5. Volver a Cultivos");
+            System.out.println("1. Suelo | 2. Personal | 3. Clima | 4. Realizar Reporte | 5. Volver a Cultivos");
             System.out.print("Opción: ");
             
             try {
@@ -141,7 +141,13 @@ ArrayList<Trabajador> trabajadores = new ArrayList<>();
                     case 1 -> gs.gestionarSuelo(activo, p, sc);
                     case 2 -> gp.gestionarPersonal(activo, v, t, sc, cp);
                     case 3 -> ge.mostrarEstadisticasClimaticas(activo, sc);
-                    case 4 -> System.out.println("Optimizar...");
+                    case 4 -> {
+                        System.out.println("\n--- Imprimiendo reporte ---");
+                        ge.imprimirReportePrediccion(activo);
+                         gs.imprimirReportePrediccion(activo);
+                         gb.imprimirReportePrediccion(activo);
+                         gp.imprimirReportePrediccion(activo);
+                    }
                     case 5 -> { return; }
                     default -> System.out.println("--- Error: Opción inválida. Elija entre 1 y 5. ---");
                 }

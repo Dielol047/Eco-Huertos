@@ -56,7 +56,26 @@ public class GestorBiodata implements Analizar {
         System.out.println("---------------------------");
     }
     @Override
-    public void imprimirReportePrediccion() {
-        // Implementación del reporte de predicción
+    public void imprimirReportePrediccion(Cultivos c) {
+       System.out.println(" Reporte Biodata");
+        
+           FamiliaBotanica familia = obtenerFamiliaPorCategoria(c.getCategoria());
+        double consumoBase = familia.getConsumoNutrientesBase();
+        double diasMaduracion = familia.getDiasMaduracionPromedio();
+
+        // 1. Índice de Presión Rotacional (IPR) - Ahora solo informativo
+        double ipr = (diasMaduracion > 0) ? (consumoBase / diasMaduracion) : 0;
+
+        // 2. Factor de Carga Nutricional (FCN) - Impacto total acumulado
+        double fcn = consumoBase * Math.sqrt(diasMaduracion);
+
+        System.out.println("\n--- ANÁLISIS DE BIODATA Y IMPACTO ACUMULADO ---");
+        System.out.printf("Impacto Nutricional Total (FCN): %.2f unidades\n", fcn);
+        System.out.printf("Intensidad de Reduccion de Nutrientes (IPR):    %.2f unidades/día\n", ipr);
+        
+        System.out.println("-------------------------------------------------------------");
+        
+        
+        
     }
 }

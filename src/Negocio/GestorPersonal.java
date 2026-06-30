@@ -401,8 +401,9 @@ public class GestorPersonal implements Analizar {
 
     } 
     @Override
-    public void imprimirReportePrediccion() {
-        // Implementación del reporte de predicción
+    public void imprimirReportePrediccion(Modelo.Cultivos c5) {
+       System.out.println("Reporte Trabajadores Y Voluntarios ");
+        
     }
 } 
 

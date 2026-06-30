@@ -1,6 +1,7 @@
 package Negocio;
+import Modelo.Cultivos;
 
 public interface Analizar  {
-    void imprimirReportePrediccion();
+    void imprimirReportePrediccion(Cultivos c);
 
 }
