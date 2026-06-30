@@ -21,6 +21,10 @@ public class Cultivos {
     private double radiacionSolarPAR;
     private boolean estadisticasCargadas = false;
 
+    private double cantidadRecolectada;
+    private double cantidadDistribuida;
+    private double cantidadSobrante;
+
     public Cultivos(String categoria,String nombre, double metrosCuadrados) {
         this.categoria=categoria;
         this.nombre = nombre;
@@ -39,8 +43,15 @@ public class Cultivos {
         ContextoAgroCiclo.getTasaMaduracion();
         this.id = contadorIDs++;
         this.parcelaAsignada = null;
+         this.cantidadRecolectada = 0;
+        this.cantidadDistribuida = 0;
+        this.cantidadSobrante = 0;
     }
-    // Getters y Setters Climáticos
+   
+     public double getCantidadRecolectada() { return cantidadRecolectada; }
+    public double getCantidadDistribuida() { return cantidadDistribuida; }
+    public double getSobranteActual() { return cantidadSobrante; }
+
     public boolean tieneEstadisticas() { return estadisticasCargadas; }
     public void setEstadisticasCargadas(boolean valor) { this.estadisticasCargadas = valor; }
 

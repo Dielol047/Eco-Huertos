@@ -9,6 +9,9 @@ import java.util.Scanner;
 public class GestorPersonal implements Analizar {
 
     // --- MÉTODOS DE REGISTRO ---
+     private ArrayList<Voluntario> voluntarios = new ArrayList<>();
+    private ArrayList<Trabajador> trabajadores = new ArrayList<>();
+
     public void registrarVoluntario(Cultivos activo, ArrayList<Voluntario> voluntarios, Scanner scanner, int idContador) {
         String nomVol = "";
         while (nomVol.isEmpty()) {
@@ -134,7 +137,9 @@ public class GestorPersonal implements Analizar {
 
        // --- MENÚ PRINCIPAL DEL GESTOR ---
     public void gestionarPersonal(Cultivos activo, ArrayList<Voluntario> voluntarios, ArrayList<Trabajador> trabajadores, Scanner scanner, int[] contador) {
-         
+         this.voluntarios = voluntarios;
+        this.trabajadores = trabajadores;
+
         int opcionPersonal = 0;
         while (opcionPersonal != 4) {
             System.out.println("\n--- MENU PERSONAL ---");
@@ -401,10 +406,60 @@ public class GestorPersonal implements Analizar {
 
     } 
     @Override
-    public void imprimirReportePrediccion(Modelo.Cultivos c5) {
+    public void imprimirReportePrediccion(Modelo.Cultivos c) {
        System.out.println("Reporte Trabajadores Y Voluntarios ");
+
+        if (c == null) {
+            System.out.println("--- Error: No se proporcionó un cultivo válido ---");
+            return;
+        }
+         int numTrabajadores = 0;
+        int numVoluntarios = 0;
+        double sumaFC = 0;
+         for (Voluntario v : this.voluntarios) {
+            if (v.getIdCultivo() == c.getId()) {
+                numVoluntarios++;
+                sumaFC += (v.getCargo().contains("Inspector") || v.getCargo().contains("Monitor")) ? 1.0 : 0.5;
+            }
+        }
+
+        for (Trabajador t : this.trabajadores) {
+            if (t.getIdCultivo() == c.getId()) {
+                numTrabajadores++;
+                sumaFC += (t.getCargo().contains("Admin") || t.getCargo().contains("Supervisor")) ? 2.0 : 1.5;
+            }
+        }
+
+        double area = (c.getAreaKm2() <= 0) ? 1.0 : c.getAreaKm2();
+        double is = (double) numTrabajadores / (numVoluntarios + 1);
+        double cop = (sumaFC > 0) ? (area / sumaFC) : area;
+    
+        //double is = (double) numTrabajadores / (numVoluntarios + 1);
         
+        // COP = AreaCultivo / Suma(FC)
+        //double cop = (sumaFC > 0) ? (area / sumaFC) : area;
+
+        System.out.println("\n--- REPORTE DE GESTIÓN DE PERSONAL (" + c.getNombre() + ") ---");
+        System.out.printf("Índice de Supervisión (IS): %.2f\n", is);
+        System.out.printf("Cobertura Operativa (COP):  %.2f km2/pto\n", cop);
+        System.out.println("-------------------------------------------------------------");
+
+        // DIAGNÓSTICO
+        if (is < 0.20) {
+            System.out.println(" Riesgo Crítico: Déficit de supervisión técnica detectado.");
+        } else if (is >= 0.80) {
+            System.out.println(" Estructura Óptima: Alta capacidad de supervisión.");
+        }
+
+        if (cop > 0.50) {
+            System.out.println(" Alerta Operativa: Exceso de carga por persona (COP alto). " +
+                               "Se recomienda asignar más personal técnico.");
+        }
+
+        System.out.println(".............................................................\n");
     }
+        
+    
 } 
 
     
