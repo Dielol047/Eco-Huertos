@@ -29,7 +29,7 @@ public class Cultivos {
         this.categoria=categoria;
         this.nombre = nombre;
         this.areaKm2 = metrosCuadrados;
-        // Asignamos valores desde el contexto
+        
         GestorBiodata gestor = new GestorBiodata();
         GestorBiodata.FamiliaBotanica familia = gestor.obtenerFamiliaPorCategoria(categoria);
         

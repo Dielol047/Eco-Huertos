@@ -184,11 +184,11 @@ public class AgroCicloGUI extends JFrame {
 
         JPanel grid = new JPanel(new GridLayout(0, 1, 0, 10));
         String[][] ramas = {
-            {"Solanum",        "Tomate, papa, pimiento, berenjena"},
-            {"Musáceas",       "Plátano, banano, guineo"},
-            {"Cucurbitáceas",  "Zapallo, calabaza, pepino, melón, sandía"},
-            {"Leguminosas",    "Frijol, arveja, haba, lenteja"},
-            {"Brasicáceas",    "Brócoli, col, coliflor, rábano, nabos"}
+                {"Solanum",        "Tomate, papa, pimiento, berenjena"},
+                {"Musáceas",       "Plátano, banano, guineo"},
+                {"Cucurbitáceas",  "Zapallo, calabaza, pepino, melón, sandía"},
+                {"Leguminosas",    "Frijol, arveja, haba, lenteja"},
+                {"Brasicáceas",    "Brócoli, col, coliflor, rábano, nabos"}
         };
         for (String[] r : ramas) {
             JButton b = botonPrimario("<html><b>" + r[0] + "</b><br><span style='font-size:9px'>" + r[1] + "</span></html>");
@@ -216,11 +216,11 @@ public class AgroCicloGUI extends JFrame {
 
     private void mostrarGuia() {
         String guia =
-            "1. Solanaceae: Tomate, papa, pimiento, berenjena.\n" +
-            "2. Musáceas: Plátano, banano, guineo.\n" +
-            "3. Cucurbitáceas: Zapallo, calabaza, pepino, melón, sandía.\n" +
-            "4. Leguminosas: Frijol, arveja, haba, lenteja.\n" +
-            "5. Brasicáceas: Brócoli, col, coliflor, rábano, nabos.";
+                "1. Solanaceae: Tomate, papa, pimiento, berenjena.\n" +
+                        "2. Musáceas: Plátano, banano, guineo.\n" +
+                        "3. Cucurbitáceas: Zapallo, calabaza, pepino, melón, sandía.\n" +
+                        "4. Leguminosas: Frijol, arveja, haba, lenteja.\n" +
+                        "5. Brasicáceas: Brócoli, col, coliflor, rábano, nabos.";
         JOptionPane.showMessageDialog(this, guia,
                 "Catálogo taxonómico y características", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -355,11 +355,14 @@ public class AgroCicloGUI extends JFrame {
         JButton bReporte = botonPrimario("4. Realizar reporte");
         bReporte.addActionListener(e -> generarReporteEnVentana());
 
-        JButton bVolver = new JButton("5. Volver a cultivos");
+        JButton bCsv = botonPrimario("5. Exportar reporte a CSV");
+        bCsv.addActionListener(e -> generarReporteCSV());
+
+        JButton bVolver = new JButton("6. Volver a cultivos");
         bVolver.addActionListener(e -> cards.show(panelCentro, "LISTA"));
 
         botonesMenu.clear();
-        for (JButton b : new JButton[]{bSuelo, bPersonal, bClima, bReporte}) { botonesMenu.add(b); grid.add(b); }
+        for (JButton b : new JButton[]{bSuelo, bPersonal, bClima, bReporte, bCsv}) { botonesMenu.add(b); grid.add(b); }
         grid.add(bVolver);
         p.add(grid, BorderLayout.CENTER);
 
@@ -513,5 +516,134 @@ public class AgroCicloGUI extends JFrame {
         JScrollPane scroll = new JScrollPane(textArea);
 
         JOptionPane.showMessageDialog(this, scroll, "Reporte Completo", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // -------------------------------------------------------------------------
+    // Exportación del REPORTE COMPLETO a un archivo CSV
+    // -------------------------------------------------------------------------
+    /**
+     * Genera un archivo .csv con el reporte completo del cultivo activo.
+     * Reutiliza el mismo contenido que imprimirReporte() (Clima, Suelo,
+     * Biodata y Personal): captura esa salida de texto y la vuelca a CSV.
+     */
+    private void generarReporteCSV() {
+        if (cultivoActivo == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Primero seleccione un cultivo con el que trabajar.",
+                    "Sin cultivo activo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 1) Capturar TODO el texto del reporte (mismo contenido que la ventana)
+        String reporte = capturarSalidaUTF8(this::imprimirReporte);
+
+        // 2) Preguntar dónde guardar
+        String sugerido = "Reporte_" + limpiarNombreArchivo(cultivoActivo.getNombre())
+                + "_" + new java.text.SimpleDateFormat("yyyyMMdd_HHmm").format(new java.util.Date())
+                + ".csv";
+        JFileChooser fc = new JFileChooser();
+        fc.setDialogTitle("Guardar reporte como CSV");
+        fc.setSelectedFile(new java.io.File(sugerido));
+        if (fc.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+        java.io.File archivo = fc.getSelectedFile();
+        if (!archivo.getName().toLowerCase().endsWith(".csv")) {
+            archivo = new java.io.File(archivo.getParentFile(), archivo.getName() + ".csv");
+        }
+
+        // 3) Escribir el CSV (separador ';' + BOM UTF-8 => acentos correctos en Excel)
+        final char SEP = ';';
+        try (java.io.Writer w = new java.io.OutputStreamWriter(
+                new java.io.FileOutputStream(archivo), StandardCharsets.UTF_8)) {
+
+            w.write('\uFEFF'); // BOM para que Excel muestre bien las tildes y la ñ
+
+            // Encabezado / metadatos del cultivo
+            w.write(fila(SEP, "REPORTE COMPLETO AGROCICLO"));
+            w.write(fila(SEP, "Cultivo", cultivoActivo.getNombre()));
+            w.write(fila(SEP, "Categoria", cultivoActivo.getCategoria()));
+            w.write(fila(SEP, "ID", String.valueOf(cultivoActivo.getId())));
+            w.write(fila(SEP, "Generado",
+                    new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())));
+            w.write(fila(SEP)); // línea en blanco
+
+            // Cabecera de columnas del detalle
+            w.write(fila(SEP, "Seccion", "Campo", "Valor"));
+
+            // Recorremos el reporte línea por línea, sin perder nada
+            String seccionActual = "General";
+            for (String cruda : reporte.split("\n")) {
+                String linea = cruda.replace("\r", "").trim();
+                if (linea.isEmpty()) continue;
+
+                // ¿Es un encabezado de sección? (línea sin ":" o marcada con guiones)
+                if (!linea.contains(":")) {
+                    String limpia = linea.replace("---", "").replace("===", "")
+                            .replace("***", "").trim();
+                    if (!limpia.isEmpty()) {              // ignora separadores tipo "-----"
+                        seccionActual = limpia;
+                        w.write(fila(SEP, seccionActual, "", ""));
+                    }
+                    continue;
+                }
+
+                // Par "Campo: Valor" -> se separa en dos columnas
+                int i = linea.indexOf(':');
+                String campo = linea.substring(0, i).trim();
+                String valor = linea.substring(i + 1).trim();
+                w.write(fila(SEP, seccionActual, campo, valor));
+            }
+
+            System.out.println(">>> Reporte CSV generado: " + archivo.getAbsolutePath());
+            JOptionPane.showMessageDialog(this,
+                    "Reporte exportado correctamente a:\n" + archivo.getAbsolutePath(),
+                    "CSV generado", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (java.io.IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "No se pudo escribir el archivo:\n" + ex.getMessage(),
+                    "Error al guardar", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /** Captura en UTF-8 todo lo que un Runnable imprime por System.out. */
+    private String capturarSalidaUTF8(Runnable accion) {
+        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+        java.io.PrintStream ps = new java.io.PrintStream(baos, true, StandardCharsets.UTF_8);
+        java.io.PrintStream original = System.out;
+        System.setOut(ps);
+        try {
+            accion.run();
+            System.out.flush();
+        } finally {
+            System.setOut(original);
+        }
+        return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+    /** Construye una fila CSV completa (con salto de línea CRLF) escapando cada campo. */
+    private String fila(char sep, String... campos) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < campos.length; i++) {
+            if (i > 0) sb.append(sep);
+            sb.append(escaparCSV(campos[i], sep));
+        }
+        sb.append("\r\n");
+        return sb.toString();
+    }
+
+    /** Escapa un campo CSV: dobla comillas y encierra si contiene separador, comillas o saltos. */
+    private String escaparCSV(String campo, char sep) {
+        if (campo == null) campo = "";
+        boolean necesita = campo.indexOf(sep) >= 0 || campo.indexOf('"') >= 0
+                || campo.indexOf('\n') >= 0 || campo.indexOf('\r') >= 0;
+        String v = campo.replace("\"", "\"\"");
+        return necesita ? "\"" + v + "\"" : v;
+    }
+
+    /** Deja un texto apto para usarse como nombre de archivo. */
+    private String limpiarNombreArchivo(String s) {
+        if (s == null || s.trim().isEmpty()) return "cultivo";
+        return s.trim().replaceAll("[^\\p{L}\\p{Nd}_-]+", "_");
     }
 }
